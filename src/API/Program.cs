@@ -1,5 +1,6 @@
 using Serilog.Sinks.MSSqlServer;
 using Serilog;
+using Infraestructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddCors();
+
+//Configurations
+DbConfiguration.AddDbContext(builder.Services, builder.Configuration);
 
 // Inject logging
 builder.Services.AddLogging(options =>
