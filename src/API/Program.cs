@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddCors();
 
 // Inject logging
 builder.Services.AddLogging(options =>
@@ -31,6 +32,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(x => x
+    .SetIsOriginAllowed(options => true)
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials()
+);
 
 app.MapControllers();
 
