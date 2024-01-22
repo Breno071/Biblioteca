@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 #nullable disable
-namespace Domain.Entities
+namespace Domain.Models.Entities
 {
     public class Book
     {

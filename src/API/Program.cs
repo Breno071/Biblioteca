@@ -1,6 +1,7 @@
 using Serilog.Sinks.MSSqlServer;
 using Serilog;
 using Infraestructure.Configuration;
+using ApplicationCore.Configuration.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddCors();
 
 //Configurations
 DbConfiguration.AddDbContext(builder.Services, builder.Configuration);
+AutoMapperConfigurationBuilder.ConfigureAutoMapper(builder.Services);
 
 // Inject logging
 builder.Services.AddLogging(options =>

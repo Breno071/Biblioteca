@@ -1,6 +1,7 @@
 ﻿using Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
+#nullable disable
 namespace Domain.Models.DTO
 {
     public class BookDTO
