@@ -1,8 +1,12 @@
-using Serilog.Sinks.MSSqlServer;
-using Serilog;
-using Infraestructure.Configuration;
 using ApplicationCore.Configuration.Mappers;
+using ApplicationCore.Services;
+using Domain.Interfaces;
+using Infraestructure.Configuration;
+using RabbitMQ.Client;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 using System.Text.Json.Serialization;
+using RabbitMQ.Producer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +24,10 @@ builder.Services.AddCors();
 //Configurations
 DbConfiguration.AddDbContext(builder.Services, builder.Configuration);
 AutoMapperConfigurationBuilder.ConfigureAutoMapper(builder.Services);
+
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<ConnectionFactory>();
+builder.Services.AddScoped<IProducer, Producer>();
 
 // Inject logging
 builder.Services.AddLogging(options =>
