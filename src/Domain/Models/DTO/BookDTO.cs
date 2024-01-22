@@ -8,7 +8,7 @@ namespace Domain.Models.DTO
     {
         public Guid Code { get; set; } = Guid.NewGuid();
         [Required]
-        [MaxLength(1)]
+        [MaxLength(255)]
         public string Title { get; set; }
 
         [Required]
