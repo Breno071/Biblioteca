@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infraestructure.Migrations
 {
     [DbContext(typeof(BaseDbContext))]
-    [Migration("20240121174642_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240122182641_UpDatabase")]
+    partial class UpDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,9 @@ namespace Infraestructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<Guid?>("ReservationCode")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
@@ -56,6 +59,8 @@ namespace Infraestructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Code");
+
+                    b.HasIndex("ReservationCode");
 
                     b.ToTable("Books");
                 });
@@ -79,6 +84,54 @@ namespace Infraestructure.Migrations
                     b.HasKey("Code");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Reservation", b =>
+                {
+                    b.Property<Guid>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientCode")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsReturned")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ReservationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("ClientCode");
+
+                    b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Book", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Reservation", null)
+                        .WithMany("Books")
+                        .HasForeignKey("ReservationCode");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Reservation", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Reservation", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }
