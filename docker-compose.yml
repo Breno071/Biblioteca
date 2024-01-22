@@ -31,9 +31,9 @@ services:
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
         - library-network
-
+ 
   api:
-    image: api
+    image: ${DOCKER_REGISTRY-}api
     build:
       context: .
       dockerfile: src/API/Dockerfile
@@ -44,6 +44,21 @@ services:
     restart: always
     ports:
       - 5023:8080
+
+  tests:
+    image: ${DOCKER_REGISTRY-}tests
+    build:
+      context: .
+      dockerfile: tests/Tests/Dockerfile
+    networks:
+      - library-network
+    depends_on:
+      - sqlserver
+
+
 networks:
     library-network:
         driver: bridge
+
+  
+
