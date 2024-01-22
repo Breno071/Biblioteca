@@ -14,5 +14,13 @@ namespace Infraestructure.Configuration
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
         }
+
+        public static void InitializeMigration(IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<BaseDbContext>();
+            context.Database.Migrate();
+        }
     }
 }

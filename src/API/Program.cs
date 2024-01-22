@@ -30,6 +30,9 @@ builder.Services.AddLogging(options =>
 
 var app = builder.Build();
 
+//Initialize Migrations
+DbConfiguration.InitializeMigration(app.Services);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
