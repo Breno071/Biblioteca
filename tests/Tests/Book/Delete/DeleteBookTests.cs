@@ -1,5 +1,6 @@
 ﻿using API.Controllers;
 using AutoMapper;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -14,7 +15,7 @@ namespace Tests.Book.Delete
             var controller = new BookController(DbContext, Mock.Of<IMapper>());
             var id = Guid.NewGuid();
 
-            var existingBook = new Domain.Models.Entities.Book { Code = id, Title = "Existing Book", Author = "Author", Year = 2022 };
+            var existingBook = new Domain.Models.Entities.Book { Code = id, Title = "Existing Book", Author = "Author", Year = 2022, Publisher = "Publisher", Genre = Genre.Fantasy };
             DbContext.Books.Add(existingBook);
             DbContext.SaveChanges();
 
