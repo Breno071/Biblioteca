@@ -7,14 +7,14 @@ namespace Tests.Stock
 {
     public class FinishReservationTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidReservationCode_WhenFinishingReservation_ThenReturnsOkResult()
         {
             // Arrange
             var controller = new StockController(DbContext, _reservationService);
             var reservationCode = Guid.NewGuid();
 
-            var client = new Client { Code = Guid.NewGuid() };
+            var client = new Domain.Models.Entities.Client { Code = Guid.NewGuid() };
             var books = new List<Domain.Models.Entities.Book> { new() { Code = Guid.NewGuid(), Stock = 1 } };
 
             var reservation = new Reservation
@@ -40,7 +40,7 @@ namespace Tests.Stock
             }
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyReservationCode_WhenFinishingReservation_ThenReturnsBadRequest()
         {
             // Arrange
@@ -53,7 +53,7 @@ namespace Tests.Stock
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentReservation_WhenFinishingReservation_ThenReturnsNotFoundResult()
         {
             // Arrange

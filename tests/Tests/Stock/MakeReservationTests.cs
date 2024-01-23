@@ -6,7 +6,7 @@ namespace Tests.Stock
 {
     public class MakeReservationTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidParameters_WhenMakingReservation_ThenReturnsOkResultWithReservation()
         {
             // Arrange
@@ -16,7 +16,7 @@ namespace Tests.Stock
             var returnDate = DateTime.Now.AddDays(14);
 
             // Act
-            DbContext.Clients.Add(new Client { Code = clientCode });
+            DbContext.Clients.Add(new Domain.Models.Entities.Client { Code = clientCode });
             DbContext.Books.AddRange(bookCodes.Select(code => new Domain.Models.Entities.Book { Code = code, Stock = 1 }));
             DbContext.SaveChanges();
             var result = await controller.MakeReservation(clientCode, bookCodes, returnDate);
@@ -30,7 +30,7 @@ namespace Tests.Stock
             Assert.Equal(returnDate, reservation.ReturnDate);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyClientId_WhenMakingReservation_ThenReturnsBadRequest()
         {
             // Arrange
@@ -43,7 +43,7 @@ namespace Tests.Stock
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNullBookCodes_WhenMakingReservation_ThenReturnsBadRequest()
         {
             // Arrange
@@ -56,7 +56,7 @@ namespace Tests.Stock
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyBookCodes_WhenMakingReservation_ThenReturnsBadRequest()
         {
             // Arrange
@@ -69,7 +69,7 @@ namespace Tests.Stock
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentClient_WhenMakingReservation_ThenReturnsNotFoundResult()
         {
             // Arrange
@@ -82,7 +82,7 @@ namespace Tests.Stock
             Assert.IsType<NotFoundObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentBook_WhenMakingReservation_ThenReturnsNotFoundResult()
         {
             // Arrange
@@ -90,7 +90,7 @@ namespace Tests.Stock
             var clientCode = Guid.NewGuid();
 
             // Act
-            DbContext.Clients.Add(new Client { Code = clientCode });
+            DbContext.Clients.Add(new Domain.Models.Entities.Client { Code = clientCode });
             DbContext.SaveChanges();
             var result = await controller.MakeReservation(clientCode, [Guid.NewGuid()], DateTime.Now.AddDays(14));
 
@@ -98,7 +98,7 @@ namespace Tests.Stock
             Assert.IsType<NotFoundObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task MakeReservation_GivenBookWithZeroStock_WhenMakingReservation_ThenReturnsBadRequest()
         {
             // Arrange
@@ -107,7 +107,7 @@ namespace Tests.Stock
             var bookCode = Guid.NewGuid();
 
             // Act
-            DbContext.Clients.Add(new Client { Code = clientCode });
+            DbContext.Clients.Add(new Domain.Models.Entities.Client { Code = clientCode });
             DbContext.Books.Add(new Domain.Models.Entities.Book { Code = bookCode, Stock = 0 });
             DbContext.SaveChanges();
             var result = await controller.MakeReservation(clientCode, [bookCode], DateTime.Now.AddDays(14));

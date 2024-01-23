@@ -29,7 +29,7 @@ namespace Tests.Stock
             Assert.Equal(stock, okResult.Value);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyId_WhenConsultingStock_ThenReturnsBadRequest()
         {
             // Arrange
@@ -43,7 +43,7 @@ namespace Tests.Stock
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonexistentBook_WhenConsultingBookStock_ThenReturnsNotFoundResult()
         {
             // Arrange

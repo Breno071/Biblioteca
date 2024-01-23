@@ -20,7 +20,7 @@ namespace Tests.Stock
         /// <summary>
         /// Padrão de nome : Given_When_Then
         /// </summary>
-        //[Fact]
+        [Fact]
         public async Task GivenValidInput_WhenUpdatingStock_ThenShouldReturnOkResult()
         {
             // Arrange
@@ -42,9 +42,9 @@ namespace Tests.Stock
             Assert.Equal(stock, book.Entity.Stock);
         }
 
-        //[Theory]
-        //[InlineData(-1)]
-        //[InlineData(-10)]
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(-10)]
         public async Task GivenNegativeStock_WhenUpdatingStock_ThenShouldReturnBadRequestResult(int stock)
         {
             // Arrange
@@ -58,7 +58,7 @@ namespace Tests.Stock
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNotInsertedBookCode_WhenUpdatingStock_ThenShouldReturnNotFoundResult()
         {
             // Arrange
@@ -75,8 +75,8 @@ namespace Tests.Stock
             Assert.IsType<NotFoundObjectResult>(result);
             Assert.Null(book);
         }
-        
-        //[Fact]
+
+        [Fact]
         public async Task GivenEmptyGuid_WhenUpdatingStock_ThenShouldReturnNotFoundResult()
         {
             // Arrange
