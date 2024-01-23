@@ -15,7 +15,12 @@ namespace API.Controllers
         private readonly BaseDbContext _context = context;
         private readonly IMapper _mapper = mapper;
 
-        //GetBooks
+        /// <summary>
+        /// Obtém uma lista paginada de livros.
+        /// </summary>
+        /// <param name="skip">Número de registros a serem ignorados.</param>
+        /// <param name="take">Número máximo de registros a serem retornados.</param>
+        /// <returns>Lista paginada de livros.</returns>
         [HttpGet("get-books/{skip:int}/{take:int}")]
         public async Task<IActionResult> GetBooks(int skip, int take)
         {
@@ -37,7 +42,11 @@ namespace API.Controllers
             return Ok(bookDTOs);
         }
 
-        //GetBook
+        /// <summary>
+        /// Obtém um livro por ID.
+        /// </summary>
+        /// <param name="id">ID do livro.</param>
+        /// <returns>Informações do livro.</returns>
         [HttpGet("get-book/{id:Guid}")]
         public async Task<IActionResult> GetBook(Guid id)
         {
@@ -55,7 +64,11 @@ namespace API.Controllers
             return NotFound();
         }
 
-        //GetBooksByAuthor
+        /// <summary>
+        /// Obtém uma lista de livros por autor.
+        /// </summary>
+        /// <param name="author">Nome do autor.</param>
+        /// <returns>Lista de livros do autor.</returns>
         [HttpGet("get-books-by-author/{author}")]
         public async Task<IActionResult> GetBooksByAuthor(string author)
         {
@@ -72,7 +85,11 @@ namespace API.Controllers
             return Ok(bookDTOs);
         }
 
-        //GetBooksByTitle
+        /// <summary>
+        /// Obtém uma lista de livros por título.
+        /// </summary>
+        /// <param name="title">Título do livro.</param>
+        /// <returns>Lista de livros com o título especificado.</returns>
         [HttpGet("get-books-by-title/{title}")]
         public async Task<IActionResult> GetBooksByTitle(string title)
         {
@@ -89,7 +106,11 @@ namespace API.Controllers
             return Ok(bookDTOs);
         }
 
-        //GetBooksByGenre
+        /// <summary>
+        /// Obtém uma lista de livros por gênero.
+        /// </summary>
+        /// <param name="genre">Gênero do livro.</param>
+        /// <returns>Lista de livros do gênero especificado.</returns>
         [HttpGet("get-books-by-genre/{genre}")]
         public async Task<IActionResult> GetBooksByGenre(Genre genre)
         {
@@ -102,7 +123,11 @@ namespace API.Controllers
             return Ok(bookDTOs);
         }
 
-        //GetBooksByYear
+        /// <summary>
+        /// Obtém uma lista de livros por ano de publicação.
+        /// </summary>
+        /// <param name="year">Ano de publicação dos livros.</param>
+        /// <returns>Lista de livros publicados no ano especificado.</returns>
         [HttpGet("get-books-by-year/{year:int}")]
         public async Task<IActionResult> GetBooksByYear(int year)
         {
@@ -116,7 +141,11 @@ namespace API.Controllers
             return Ok(bookDTOs);
         }
 
-        //GetBooksByPublisher
+        /// <summary>
+        /// Obtém uma lista de livros por editora.
+        /// </summary>
+        /// <param name="publisher">Nome da editora.</param>
+        /// <returns>Lista de livros da editora especificada.</returns>
         [HttpGet("get-books-by-publisher/{publisher}")]
         public async Task<IActionResult> GetBooksByPublisher(string publisher)
         {
@@ -133,7 +162,12 @@ namespace API.Controllers
             return Ok(bookDTOs);
         }
 
-        //UpdateBook
+        /// <summary>
+        /// Atualiza as informações de um livro.
+        /// </summary>
+        /// <param name="id">ID do livro a ser atualizado.</param>
+        /// <param name="bookDTO">Novas informações do livro.</param>
+        /// <returns>Informações atualizadas do livro.</returns>
         [HttpPut("update-book/{id:Guid}")]
         public async Task<IActionResult> UpdateBook(Guid id, BookDTO bookDTO)
         {
@@ -158,7 +192,11 @@ namespace API.Controllers
             return Ok(book);
         }
 
-        //CreateBook
+        /// <summary>
+        /// Cria um novo livro.
+        /// </summary>
+        /// <param name="bookDTO">Informações do novo livro a ser criado.</param>
+        /// <returns>Informações do livro recém-criado.</returns>
         [HttpPost("create-book")]
         public async Task<IActionResult> CreateBook(BookDTO bookDTO)
         {
@@ -174,7 +212,11 @@ namespace API.Controllers
             return Ok(book);
         }
 
-        //DeleteBook
+        /// <summary>
+        /// Exclui um livro por ID.
+        /// </summary>
+        /// <param name="id">ID do livro a ser excluído.</param>
+        /// <returns>Status da operação.</returns>
         [HttpDelete("delete-book/{id:Guid}")]
         public async Task<IActionResult> DeleteBook(Guid id)
         {

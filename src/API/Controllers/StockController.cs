@@ -13,7 +13,12 @@ namespace API.Controllers
         private readonly BaseDbContext _context = dbContext;
         private readonly IReservationService _reservationService = reservationService;
 
-        //SetBookStock
+        /// <summary>
+        /// Atualiza o estoque de um livro específico.
+        /// </summary>
+        /// <param name="id">ID do livro.</param>
+        /// <param name="stock">Novo valor de estoque.</param>
+        /// <returns>Status da operação.</returns>
         [HttpPut("update-book-stock/{id:Guid}")]
         public async Task<IActionResult> SetBookStock(Guid id, int stock)
         {
@@ -34,7 +39,11 @@ namespace API.Controllers
             return Ok();
         }
 
-        //ConsultBookStock
+        /// <summary>
+        /// Consulta o estoque de um livro específico.
+        /// </summary>
+        /// <param name="id">ID do livro.</param>
+        /// <returns>Quantidade disponível em estoque do livro.</returns>
         [HttpGet("consult-book-stock/{id:Guid}")]
         public async Task<IActionResult> ConsultBookStock(Guid id)
         {
@@ -50,7 +59,13 @@ namespace API.Controllers
             return Ok(book.Stock);
         }
 
-        //MakeReservation
+        /// <summary>
+        /// Realiza uma reserva de livros para um cliente.
+        /// </summary>
+        /// <param name="clientCode">ID do cliente.</param>
+        /// <param name="bookCodes">Lista de IDs de livros a serem reservados.</param>
+        /// <param name="returnDate">Data de retorno desejada para os livros.</param>
+        /// <returns>Dados da reserva realizada.</returns>
         [HttpPost("make-reservation")]
         public async Task<IActionResult> MakeReservation(Guid clientCode, List<Guid> bookCodes, DateTime? returnDate)
         {
@@ -93,7 +108,11 @@ namespace API.Controllers
             return Ok(reservation);
         }
 
-        // FinishReservation
+        /// <summary>
+        /// Finaliza uma reserva, atualizando o estoque e o status da reserva.
+        /// </summary>
+        /// <param name="reservationCode">ID da reserva.</param>
+        /// <returns>Status da operação.</returns>
         [HttpPut("finish-reservation/{reservationCode:Guid}")]
         public async Task<IActionResult> FinishReservation(Guid reservationCode)
         {

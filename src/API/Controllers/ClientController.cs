@@ -15,7 +15,12 @@ namespace API.Controllers
         private readonly BaseDbContext _context = context;
         private readonly IMapper _mapper = mapper;
 
-        //GetClients
+        /// <summary>
+        /// Obtém uma lista paginada de clientes.
+        /// </summary>
+        /// <param name="skip">Número de registros a serem ignorados.</param>
+        /// <param name="take">Número máximo de registros a serem retornados.</param>
+        /// <returns>Lista paginada de clientes.</returns>
         [HttpGet("get-clients/{skip:int}/{take:int}")]
         public async Task<IActionResult> GetClients(int skip, int take)
         {
@@ -37,9 +42,13 @@ namespace API.Controllers
             return Ok(ClientDTOs);
         }
 
-        //GetClient
+        /// <summary>
+        /// Obtém um cliente por ID.
+        /// </summary>
+        /// <param name="id">ID do cliente.</param>
+        /// <returns>Informações do cliente.</returns>
         [HttpGet("get-client/{id:Guid}")]
-        public async Task<IActionResult> Getclient(Guid id)
+        public async Task<IActionResult> GetClient(Guid id)
         {
             if (id == Guid.Empty)
                 return BadRequest("Insira um valor para realizar a busca.");
@@ -55,9 +64,13 @@ namespace API.Controllers
             return NotFound();
         }
 
-        //GetClientsByEmail
+        /// <summary>
+        /// Obtém uma lista de clientes por e-mail.
+        /// </summary>
+        /// <param name="email">Endereço de e-mail do cliente.</param>
+        /// <returns>Lista de clientes com o e-mail especificado.</returns>
         [HttpGet("get-clients-by-email/{email}")]
-        public async Task<IActionResult> GetClientsByAuthor(string email)
+        public async Task<IActionResult> GetClientsByEmail(string email)
         {
             if (string.IsNullOrEmpty(email))
                 return BadRequest("Insira um valor para realizar a busca.");
@@ -72,9 +85,14 @@ namespace API.Controllers
             return Ok(ClientDTOs);
         }
 
-        //UpdateClient
+        /// <summary>
+        /// Atualiza as informações de um cliente.
+        /// </summary>
+        /// <param name="id">ID do cliente a ser atualizado.</param>
+        /// <param name="clientDTO">Novas informações do cliente.</param>
+        /// <returns>Informações atualizadas do cliente.</returns>
         [HttpPut("update-client/{id:Guid}")]
-        public async Task<IActionResult> Updateclient(Guid id, ClientDTO ClientDTO)
+        public async Task<IActionResult> UpdateClient(Guid id, ClientDTO ClientDTO)
         {
             if (id == Guid.Empty || id != ClientDTO.Code)
                 return BadRequest("Objeto ou parametro inválido.");
@@ -92,9 +110,13 @@ namespace API.Controllers
             return Ok(client);
         }
 
-        //CreateClient
+        /// <summary>
+        /// Cria um novo cliente.
+        /// </summary>
+        /// <param name="clientDTO">Informações do novo cliente a ser criado.</param>
+        /// <returns>Informações do cliente recém-criado.</returns>
         [HttpPost("create-client")]
-        public async Task<IActionResult> Createclient(ClientDTO ClientDTO)
+        public async Task<IActionResult> CreateClient(ClientDTO ClientDTO)
         {
             var exists = _context.Clients.Any(x => x.Code == ClientDTO.Code || x.Email.Equals(ClientDTO.Email));
 
