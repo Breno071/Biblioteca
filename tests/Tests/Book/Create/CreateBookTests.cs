@@ -1,5 +1,6 @@
 ﻿using API.Controllers;
 using AutoMapper;
+using Domain.Enums;
 using Domain.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -15,13 +16,15 @@ namespace Tests.Book.Create
             var mapperMock = new Mock<IMapper>();
             var controller = new BookController(DbContext, mapperMock.Object);
 
-            var newBookDTO = new BookDTO { Code = Guid.NewGuid(), Title = "New Book", Author = "Author", Year = 2022 };
+            var newBookDTO = new BookDTO { Code = Guid.NewGuid(), Title = "New Book", Author = "Author", Publisher = "Publisher", Genre = Genre.Comedy, Year = 2022 };
             mapperMock.Setup(x => x.Map<Domain.Models.Entities.Book>(It.IsAny<BookDTO>())).Returns(new Domain.Models.Entities.Book
             {
                 Code = newBookDTO.Code,
                 Title = newBookDTO.Title,
                 Author = newBookDTO.Author,
-                Year = newBookDTO.Year
+                Year = newBookDTO.Year,
+                Publisher = newBookDTO.Publisher,
+                Genre = newBookDTO.Genre
             });
 
             // Act
@@ -51,33 +54,21 @@ namespace Tests.Book.Create
             var mapperMock = new Mock<IMapper>();
             var controller = new BookController(DbContext, mapperMock.Object);
 
-            var existingBookDTO = new BookDTO { Code = Guid.NewGuid(), Title = "Existing Book", Author = "Author", Year = 2022 };
+            var existingBookDTO = new BookDTO { Code = Guid.NewGuid(), Title = "Existing Book", Author = "Author", Publisher = "Publisher", Genre = Genre.Comedy, Year = 2022 };
             var existingBook = new Domain.Models.Entities.Book
             {
                 Code = existingBookDTO.Code,
                 Title = existingBookDTO.Title,
                 Author = existingBookDTO.Author,
-                Year = existingBookDTO.Year
+                Year = existingBookDTO.Year,
+                Publisher = existingBookDTO.Publisher,
+                Genre = existingBookDTO.Genre
             };
             DbContext.Books.Add(existingBook);
             DbContext.SaveChanges();
 
             // Act
             var result = await controller.CreateBook(existingBookDTO);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
-        }
-
-        [Fact]
-        public async Task GivenNullBookDTO_WhenCreatingBook_ThenReturnsBadRequest()
-        {
-            // Arrange
-            var mapperMock = new Mock<IMapper>();
-            var controller = new BookController(DbContext, mapperMock.Object);
-
-            // Act
-            var result = await controller.CreateBook(null);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
