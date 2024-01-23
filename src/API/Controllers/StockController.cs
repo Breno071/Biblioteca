@@ -13,9 +13,9 @@ namespace API.Controllers
         private readonly BaseDbContext _context = dbContext;
         private readonly IReservationService _reservationService = reservationService;
 
-        //UpdateBookStock
+        //SetBookStock
         [HttpPut("update-book-stock/{id:Guid}")]
-        public async Task<IActionResult> UpdateBookStock(Guid id, int stock)
+        public async Task<IActionResult> SetBookStock(Guid id, int stock)
         {
             if (stock < 0)
                 return BadRequest("Estoque não pode ser negativo.");
@@ -101,19 +101,23 @@ namespace API.Controllers
                 return BadRequest("Id não pode ser nulo ou vazio.");
 
             var reservation = await _context.Reservations
+                            .Include(x => x.Books)
+                            .Include(x => x.Client)
                             .FirstOrDefaultAsync(x => x.Code == reservationCode);
 
             if (reservation is null)
                 return NotFound();
 
-            reservation.IsReturned = true;
-            reservation.ReturnDate = DateTime.Now;
-
             foreach (var book in reservation.Books)
                 book.Stock += 1;
 
             await _context.SaveChangesAsync();
+            await _reservationService.FinishReservation(reservation);
+
             return Ok();
         }
+
     }
+
+
 }
