@@ -35,7 +35,8 @@ namespace API.Controllers
                 .AsNoTracking()
                 .Skip(skip)
                 .Take(take)
-                .OrderBy(x => x.Title)
+                .Where(x => x.Active)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
 
             var bookDTOs = _mapper.Map<List<BookDTO>>(books);
@@ -56,7 +57,7 @@ namespace API.Controllers
 
             var book = await _context.Books
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Code == id);
+                .FirstOrDefaultAsync(x => x.Code == id && x.Active);
             var bookDTO = _mapper.Map<BookDTO>(book);
 
             if (bookDTO is not null)
@@ -77,12 +78,14 @@ namespace API.Controllers
                 return BadRequest("Insira um valor para realizar a busca.");
 
             var books = await _context.Books
-                .Where(x => x.Author.Equals(author))
+                .Where(x => x.Author.Equals(author) && x.Active)
                 .AsNoTracking()
-                .OrderBy(x => x.Title)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
 
-            return Ok(books);
+            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
+
+            return Ok(bookDTOs);
         }
 
         /// <summary>
@@ -97,12 +100,14 @@ namespace API.Controllers
                 return BadRequest("Insira um valor para realizar a busca.");
 
             var books = await _context.Books
-                .Where(x => x.Title.Equals(title))
+                .Where(x => x.Title.Equals(title) && x.Active)
                 .AsNoTracking()
                 .OrderBy(x => x.Code)
                 .ToListAsync();
 
-            return Ok(books);
+            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
+
+            return Ok(bookDTOs);
         }
 
         /// <summary>
@@ -114,12 +119,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetBooksByGenre(Genre genre)
         {
             var books = await _context.Books
-                .Where(x => x.Genre == genre)
+                .Where(x => x.Genre == genre && x.Active)
                 .AsNoTracking()
-                .OrderBy(x => x.Title)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
 
-            return Ok(books);
+            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
+
+            return Ok(bookDTOs);
         }
 
         /// <summary>
@@ -131,9 +138,9 @@ namespace API.Controllers
         public async Task<IActionResult> GetBooksByYear(int year)
         {
             var books = await _context.Books
-                .Where(x => x.Year == year)
+                .Where(x => x.Year == year && x.Active)
                 .AsNoTracking()
-                .OrderBy(x => x.Title)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
 
             var bookDTOs = _mapper.Map<List<BookDTO>>(books);
@@ -153,12 +160,14 @@ namespace API.Controllers
                 return BadRequest("Insira um valor para realizar a busca.");
 
             var books = await _context.Books
-                .Where(x => x.Publisher.Equals(publisher))
+                .Where(x => x.Publisher.Equals(publisher) && x.Active)
                 .AsNoTracking()
-                .OrderBy(x => x.Title)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
 
-            return Ok(books);
+            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
+
+            return Ok(bookDTOs);
         }
 
         /// <summary>
@@ -188,7 +197,7 @@ namespace API.Controllers
 
             _context.Books.Update(book);
             await _context.SaveChangesAsync();
-            return Ok(book);
+            return Ok(bookDTO);
         }
 
         /// <summary>
@@ -208,7 +217,7 @@ namespace API.Controllers
 
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
-            return Ok(book);
+            return Ok(bookDTO);
         }
 
         /// <summary>
@@ -222,11 +231,12 @@ namespace API.Controllers
             if (id == Guid.Empty)
                 return BadRequest("Id não pode ser nulo");
 
-            var book = await _context.Books.FirstOrDefaultAsync(x => x.Code == id);
+            var book = await _context.Books.FirstOrDefaultAsync(x => x.Code == id && x.Active);
 
             if (book is not null)
             {
-                _context.Books.Remove(book);
+                book.Active = false;
+                _context.Books.Update(book);
                 await _context.SaveChangesAsync();
                 return NoContent();
             }

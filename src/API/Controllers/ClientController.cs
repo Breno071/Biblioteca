@@ -49,7 +49,7 @@ namespace API.Controllers
         /// <param name="id">ID do cliente.</param>
         /// <returns>Informações do cliente.</returns>
         [HttpGet("get-client/{id:Guid}")]
-        public async Task<IActionResult> GetClient(Guid id)
+        public async Task<IActionResult> GetClientById(Guid id)
         {
             if (id == Guid.Empty)
                 return BadRequest("Insira um valor para realizar a busca.");
@@ -100,16 +100,24 @@ namespace API.Controllers
                 return BadRequest("Objeto ou parametro inválido.");
 
             //Check if there is another client with this email
-            var exists = _context.Clients.Any(x => x.Code != ClientDTO.Code && x.Email.Equals(ClientDTO.Email));
+            var exists = _context.Clients
+                .AsNoTracking()
+                .Any(x => x.Code != ClientDTO.Code && x.Email.Equals(ClientDTO.Email));
 
-            if (!exists)
-                return NotFound("Já existe um cliente com este e-mail.");
+            if (exists)
+                return BadRequest("Já existe um cliente com este e-mail.");
 
             var client = _mapper.Map<Client>(ClientDTO);
 
-            _context.Clients.Update(client);
+            _context.Clients.Attach(client);
+
+            _context.Entry(client).State = EntityState.Modified;
+
             await _context.SaveChangesAsync();
-            return Ok(client);
+
+            _context.Entry(client).State = EntityState.Detached;
+
+            return Ok(ClientDTO);
         }
 
         /// <summary>
@@ -120,7 +128,9 @@ namespace API.Controllers
         [HttpPost("create-client")]
         public async Task<IActionResult> CreateClient(ClientDTO ClientDTO)
         {
-            var exists = _context.Clients.Any(x => x.Code == ClientDTO.Code || x.Email.Equals(ClientDTO.Email));
+            var exists = _context.Clients
+                .AsNoTracking()
+                .Any(x => x.Code == ClientDTO.Code || x.Email.Equals(ClientDTO.Email));
 
             if (exists)
                 return BadRequest("Cliente já existente.");
@@ -129,7 +139,7 @@ namespace API.Controllers
 
             _context.Clients.Add(client);
             await _context.SaveChangesAsync();
-            return Ok(client);
+            return Ok(ClientDTO);
         }
     }
 }
