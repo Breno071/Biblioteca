@@ -35,6 +35,7 @@ namespace API.Controllers
                 .AsNoTracking()
                 .Skip(skip)
                 .Take(take)
+                .OrderBy(x => x.Name)
                 .ToListAsync();
 
             var ClientDTOs = _mapper.Map<List<ClientDTO>>(clients);
@@ -78,6 +79,7 @@ namespace API.Controllers
             var clients = await _context.Clients
                 .Where(x => x.Email.Equals(email))
                 .AsNoTracking()
+                .OrderBy(x => x.Name)
                 .ToListAsync();
 
             var ClientDTOs = _mapper.Map<List<ClientDTO>>(clients);

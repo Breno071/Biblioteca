@@ -35,6 +35,7 @@ namespace API.Controllers
                 .AsNoTracking()
                 .Skip(skip)
                 .Take(take)
+                .OrderBy(x => x.Title)
                 .ToListAsync();
 
             var bookDTOs = _mapper.Map<List<BookDTO>>(books);
@@ -78,11 +79,10 @@ namespace API.Controllers
             var books = await _context.Books
                 .Where(x => x.Author.Equals(author))
                 .AsNoTracking()
+                .OrderBy(x => x.Title)
                 .ToListAsync();
 
-            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
-
-            return Ok(bookDTOs);
+            return Ok(books);
         }
 
         /// <summary>
@@ -99,6 +99,7 @@ namespace API.Controllers
             var books = await _context.Books
                 .Where(x => x.Title.Equals(title))
                 .AsNoTracking()
+                .OrderBy(x => x.Title)
                 .ToListAsync();
 
             var bookDTOs = _mapper.Map<List<BookDTO>>(books);
@@ -117,6 +118,7 @@ namespace API.Controllers
             var books = await _context.Books
                 .Where(x => x.Genre == genre)
                 .AsNoTracking()
+                .OrderBy(x => x.Title)
                 .ToListAsync();
 
             var bookDTOs = _mapper.Map<List<BookDTO>>(books);
@@ -134,6 +136,7 @@ namespace API.Controllers
             var books = await _context.Books
                 .Where(x => x.Year == year)
                 .AsNoTracking()
+                .OrderBy(x => x.Title)
                 .ToListAsync();
 
             var bookDTOs = _mapper.Map<List<BookDTO>>(books);
@@ -155,6 +158,7 @@ namespace API.Controllers
             var books = await _context.Books
                 .Where(x => x.Publisher.Equals(publisher))
                 .AsNoTracking()
+                .OrderBy(x => x.Title)
                 .ToListAsync();
 
             var bookDTOs = _mapper.Map<List<BookDTO>>(books);
