@@ -121,8 +121,7 @@ namespace API.Controllers
                 .OrderBy(x => x.Title)
                 .ToListAsync();
 
-            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
-            return Ok(bookDTOs);
+            return Ok(books);
         }
 
         /// <summary>
