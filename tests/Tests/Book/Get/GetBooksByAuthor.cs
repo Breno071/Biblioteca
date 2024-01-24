@@ -1,7 +1,10 @@
 ﻿using API.Controllers;
 using AutoMapper;
+using Domain.Enums;
 using Domain.Models.DTO;
+using Domain.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace Tests.Book.Get
@@ -14,32 +17,30 @@ namespace Tests.Book.Get
             // Arrange
             var mapperMock = new Mock<IMapper>();
             var controller = new BookController(DbContext, mapperMock.Object);
-            var author = "Test Author";
+            var author = "Irineu";
 
             var books = new List<Domain.Models.Entities.Book>
             {
-                new() { Code = Guid.NewGuid(), Title = "Book 1", Author = author },
-                new() { Code = Guid.NewGuid(), Title = "Book 2", Author = author },
-                new() { Code = Guid.NewGuid(), Title = "Book 3", Author = author }
+                new() { Code = Guid.NewGuid(), Title = "Book 1",  Author = "Irineu", Publisher = "Publisher", Year = 123, Genre = Genre.ScienceFiction },
+                new() { Code = Guid.NewGuid(), Title = "Book 2",  Author = "Irineu", Publisher = "Publisher", Year = 123, Genre = Genre.ScienceFiction }
             };
+
             DbContext.Books.AddRange(books);
             DbContext.SaveChanges();
-            var bookDTOs = books.Select(book => new BookDTO { Code = book.Code, Title = book.Title, Author = book.Author }).ToList();
-            mapperMock.Setup(x => x.Map<List<BookDTO>>(It.IsAny<List<Domain.Models.Entities.Book>>())).Returns(bookDTOs);
 
             // Act
             var result = await controller.GetBooksByAuthor(author);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBookDTOs = Assert.IsType<List<BookDTO>>(okResult.Value);
+            var returnedBooks = Assert.IsType<List<Domain.Models.Entities.Book>>(okResult.Value);
 
-            Assert.Equal(bookDTOs.Count, returnedBookDTOs.Count);
-            for (int i = 0; i < bookDTOs.Count; i++)
+            Assert.Equal(books.Count, returnedBooks.Count);
+            for (int i = 0; i < books.Count; i++)
             {
-                Assert.Equal(bookDTOs[i].Code, returnedBookDTOs[i].Code);
-                Assert.Equal(bookDTOs[i].Title, returnedBookDTOs[i].Title);
-                Assert.Equal(bookDTOs[i].Author, returnedBookDTOs[i].Author);
+                Assert.Equal(books[i].Code, returnedBooks[i].Code);
+                Assert.Equal(books[i].Title, returnedBooks[i].Title);
+                Assert.Equal(books[i].Author, returnedBooks[i].Author);
             }
         }
 
@@ -84,9 +85,9 @@ namespace Tests.Book.Get
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBookDTOs = Assert.IsType<List<BookDTO>>(okResult.Value);
+            var returnedBooks = Assert.IsType<List<Domain.Models.Entities.Book>>(okResult.Value);
 
-            Assert.Empty(returnedBookDTOs);
+            Assert.Empty(returnedBooks);
         }
     }
 }
