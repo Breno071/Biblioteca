@@ -17,7 +17,7 @@ services:
     volumes:
       - ./entrypoint.sh:/tmp/entrypoint.sh
       - ./setup.sql:/tmp/setup.sql
-    command: chmod +x ./tmp/entrypoint.sh && ./tmp/entrypoint.sh
+    command: sh -c ' chmod +x ./tmp/entrypoint.sh; ./tmp/entrypoint.sh & /opt/mssql/bin/sqlservr;'
     restart: always
 
   rabbitmq:
