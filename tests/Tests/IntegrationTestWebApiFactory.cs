@@ -39,6 +39,7 @@ namespace Tests
 
                 services.AddDbContext<BaseDbContext>(options =>
                     options.UseSqlServer(_msSqlContainer.GetConnectionString()));
+                services.AddAutoMapper(typeof(Program).Assembly);
             });
         }
 
