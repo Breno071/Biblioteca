@@ -23,7 +23,7 @@ builder.Services.AddCors();
 
 //Configurations
 DbConfiguration.AddDbContext(builder.Services, builder.Configuration);
-AutoMapperConfigurationBuilder.ConfigureAutoMapper(builder.Services, typeof(Program));
+AutoMapperConfigurationBuilder.ConfigureAutoMapper(builder.Services);
 
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<ConnectionFactory>();
