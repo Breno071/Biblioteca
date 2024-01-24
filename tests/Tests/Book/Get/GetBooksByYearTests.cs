@@ -10,7 +10,7 @@ namespace Tests.Book.Get
 {
     public class GetBooksByYearTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidYear_WhenGettingBooks_ThenReturnsOkResultWithBookDTOs()
         {
             // Arrange
@@ -72,7 +72,7 @@ namespace Tests.Book.Get
             Assert.Equal(bookDTOs.Count, returnedBooks.Count);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNoMatchingBooks_WhenGettingBooks_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange

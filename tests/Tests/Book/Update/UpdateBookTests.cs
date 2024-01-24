@@ -60,7 +60,7 @@ namespace Tests.Book.Update
             Assert.Equal(updatedBookDTO.Year, updatedBookInDb.Year);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenInvalidId_WhenUpdatingBook_ThenReturnsBadRequest()
         {
             // Arrange
@@ -82,7 +82,7 @@ namespace Tests.Book.Update
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentId_WhenUpdatingBook_ThenReturnsNotFound()
         {
             // Arrange

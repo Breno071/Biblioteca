@@ -8,7 +8,7 @@ namespace Tests.Client.Get
 {
     public class GetClientsTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidSkipAndTake_WhenGettingClients_ThenReturnsOkResultWithClientDTOs()
         {
             // Arrange
@@ -58,7 +58,7 @@ namespace Tests.Client.Get
             Assert.Equal(clientDTOs.Count, returnedClientDTOs.Count);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNegativeSkipOrTake_WhenGettingClients_ThenReturnsBadRequest()
         {
             // Arrange
@@ -74,7 +74,7 @@ namespace Tests.Client.Get
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenTakeGreaterThanLimit_WhenGettingClients_ThenReturnsBadRequest()
         {
             // Arrange

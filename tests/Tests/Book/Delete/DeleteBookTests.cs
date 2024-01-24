@@ -9,7 +9,7 @@ namespace Tests.Book.Delete
 {
     public class DeleteBookTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenExistingId_WhenDeletingBook_ThenReturnsNoContent()
         {
             // Arrange
@@ -39,7 +39,7 @@ namespace Tests.Book.Delete
             Assert.False(deletedBookInDb?.Active);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentId_WhenDeletingBook_ThenReturnsNotFound()
         {
             // Arrange
@@ -53,7 +53,7 @@ namespace Tests.Book.Delete
             Assert.IsType<NotFoundResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyId_WhenDeletingBook_ThenReturnsBadRequest()
         {
             // Arrange

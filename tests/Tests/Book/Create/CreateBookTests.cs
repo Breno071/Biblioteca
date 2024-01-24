@@ -45,7 +45,7 @@ namespace Tests.Book.Create
             Assert.Equal(newBookDTO.Year, createdBookInDb.Year);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenExistingBookDTO_WhenCreatingBook_ThenReturnsBadRequest()
         {
             // Arrange

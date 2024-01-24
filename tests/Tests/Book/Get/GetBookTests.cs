@@ -9,7 +9,7 @@ namespace Tests.Book.Get
 {
     public class GetBookTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidParameters_WhenGettingBooks_ThenReturnsOkResultWithBookDTOs()
         {
             // Arrange
@@ -129,10 +129,10 @@ namespace Tests.Book.Get
             Assert.Equal(bookDTOs.Count, returnedBooks.Count);
         }
 
-        //[Theory]
-        //[InlineData(-1, 5)]
-        //[InlineData(0, -5)]
-        //[InlineData(0, 1001)]
+        [Theory]
+        [InlineData(-1, 5)]
+        [InlineData(0, -5)]
+        [InlineData(0, 1001)]
         public async Task GivenInvalidParameters_WhenGettingBooks_ThenReturnsBadRequest(int skip, int take)
         {
             // Arrange

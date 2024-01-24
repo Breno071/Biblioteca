@@ -11,7 +11,7 @@ namespace Tests.Book.Get
 {
     public class GetBookByIdTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidBookId_WhenGettingBook_ThenReturnsOkResultWithBookDTO()
         {
             // Arrange            
@@ -50,7 +50,7 @@ namespace Tests.Book.Get
             Assert.Equal(bookDTO.Code, returnedBooks.Code);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyBookId_WhenGettingBook_ThenReturnsBadRequest()
         {
             // Arrange
@@ -64,7 +64,7 @@ namespace Tests.Book.Get
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentBook_WhenGettingBook_ThenReturnsNotFoundResult()
         {
             // Arrange

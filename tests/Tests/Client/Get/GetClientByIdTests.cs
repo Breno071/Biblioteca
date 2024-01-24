@@ -8,7 +8,7 @@ namespace Tests.Client.Get
 {
     public class GetClientByIdTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidId_WhenGettingClient_ThenReturnsOkResultWithClientDTO()
         {
             // Arrange
@@ -43,7 +43,7 @@ namespace Tests.Client.Get
             Assert.Equal(clientDTO.Email, returnedClientDTO.Email);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyId_WhenGettingClient_ThenReturnsBadRequest()
         {
             // Arrange
@@ -57,7 +57,7 @@ namespace Tests.Client.Get
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentId_WhenGettingClient_ThenReturnsNotFound()
         {
             // Arrange

@@ -9,7 +9,7 @@ namespace Tests.Client.Update
 {
     public class UpdateClientTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidIdAndMatchingDTO_WhenUpdatingClient_ThenReturnsOkResultWithUpdatedClient()
         {
             // Arrange
@@ -55,7 +55,7 @@ namespace Tests.Client.Update
             Assert.Equal(updatedClientDTO.Email, client.Email);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenMismatchedIdAndDTO_WhenUpdatingClient_ThenReturnsBadRequest()
         {
             // Arrange
@@ -87,7 +87,7 @@ namespace Tests.Client.Update
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyId_WhenUpdatingClient_ThenReturnsBadRequest()
         {
             // Arrange
@@ -101,7 +101,7 @@ namespace Tests.Client.Update
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenClientWithExistingEmail_WhenUpdatingClient_ThenReturnsBadRequest()
         {
             // Arrange

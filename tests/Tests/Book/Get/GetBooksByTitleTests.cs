@@ -10,7 +10,7 @@ namespace Tests.Book.Get
 {
     public class GetBooksByTitleTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidTitle_WhenGettingBooks_ThenReturnsOkResultWithBookDTOs()
         {
             // Arrange
@@ -72,7 +72,7 @@ namespace Tests.Book.Get
             Assert.Equal(bookDTOs.Count, returnedBooks.Count);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyTitle_WhenGettingBooks_ThenReturnsBadRequest()
         {
             // Arrange
@@ -85,7 +85,7 @@ namespace Tests.Book.Get
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNoMatchingBooks_WhenGettingBooks_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange

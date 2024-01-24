@@ -14,7 +14,7 @@ namespace Tests.Client.Create
 {
     public class CreateClientTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task CreateClient_GivenNonExistentClientDTO_WhenCreatingClient_ThenReturnsOkResultWithCreatedClient()
         {
             // Arrange
@@ -45,7 +45,7 @@ namespace Tests.Client.Create
             Assert.Equal(clientDTO.Email, createdClientInDb.Email);
         }
 
-        //[Fact]
+        [Fact]
         public async Task CreateClient_GivenExistingClientDTO_WhenCreatingClient_ThenReturnsBadRequest()
         {
             // Arrange
@@ -74,7 +74,7 @@ namespace Tests.Client.Create
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task CreateClient_GivenClientDTOWithExistingEmail_WhenCreatingClient_ThenReturnsBadRequest()
         {
             // Arrange

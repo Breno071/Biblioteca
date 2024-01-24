@@ -11,7 +11,7 @@ namespace Tests.Book.Get
 {
     public class GetBooksByAuthor(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidAuthor_WhenGettingBooksByAuthor_ThenReturnsOkResultWithBookDTOs()
         {
             // Arrange
@@ -57,7 +57,7 @@ namespace Tests.Book.Get
             Assert.Equal(books.Count, returnedBooks.Count);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyAuthor_WhenGettingBooksByAuthor_ThenReturnsBadRequest()
         {
             // Arrange
@@ -71,7 +71,7 @@ namespace Tests.Book.Get
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNoMatchingBooks_WhenGettingBooksByAuthor_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange

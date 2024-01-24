@@ -9,7 +9,7 @@ namespace Tests.Client.Get
 {
     public class GetClientsByEmailTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidEmail_WhenGettingClients_ThenReturnsOkResultWithClientDTOs()
         {
             // Arrange
@@ -53,7 +53,7 @@ namespace Tests.Client.Get
             Assert.Equal(clientDTOs.Count, returnedClientDTOs.Count);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentEmail_WhenGettingClients_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange

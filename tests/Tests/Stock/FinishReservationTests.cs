@@ -9,7 +9,7 @@ namespace Tests.Stock
 {
     public class FinishReservationTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        //[Fact]
+        [Fact]
         public async Task GivenValidReservationCode_WhenFinishingReservation_ThenReturnsOkResult()
         {
             // Arrange
@@ -57,7 +57,7 @@ namespace Tests.Stock
             Assert.IsType<OkResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenEmptyReservationCode_WhenFinishingReservation_ThenReturnsBadRequest()
         {
             // Arrange
@@ -70,7 +70,7 @@ namespace Tests.Stock
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        //[Fact]
+        [Fact]
         public async Task GivenNonExistentReservation_WhenFinishingReservation_ThenReturnsNotFoundResult()
         {
             // Arrange
