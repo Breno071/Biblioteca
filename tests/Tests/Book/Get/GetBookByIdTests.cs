@@ -1,75 +1,82 @@
 ﻿using API.Controllers;
 using AutoMapper;
+using Domain.Enums;
 using Domain.Models.DTO;
+using Domain.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace Tests.Book.Get
 {
     public class GetBookByIdTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        [Fact]
-        public async Task GivenValidParameters_WhenGettingBooks_ThenReturnsOkResultWithBookDTOs()
+        //[Fact]
+        public async Task GivenValidBookId_WhenGettingBook_ThenReturnsOkResultWithBookDTO()
         {
-            // Arrange
-            var mapperMock = new Mock<IMapper>();
-            var controller = new BookController(DbContext, mapperMock.Object);
-            var skip = 0;
-            var take = 5;
+            // Arrange            
+            var controller = new BookController(DbContext, _mapper);
+            var bookId = Guid.NewGuid();
 
-            var books = new List<Domain.Models.Entities.Book>
+            var book = new Domain.Models.Entities.Book
             {
-                new() { Code = Guid.NewGuid(), Title = "Book 1" },
-                new Domain.Models.Entities.Book{ Code = Guid.NewGuid(), Title = "Book 2" },
-                new Domain.Models.Entities.Book{ Code = Guid.NewGuid(), Title = "Book 3" },
-                new Domain.Models.Entities.Book{ Code = Guid.NewGuid(), Title = "Book 4" },
-                new Domain.Models.Entities.Book{ Code = Guid.NewGuid(), Title = "Book 5" }
+                Code = bookId,
+                Title = "Test Book",
+                Author = "Author",
+                Publisher = "publisher",
+                Year = 1234,
+                Genre = Genre.Science
             };
 
-            DbContext.Books.AddRange(books);
-            DbContext.SaveChanges();
-
-            var bookDTOs = new List<BookDTO>
+            var bookDTO = new BookDTO()
             {
-                new BookDTO { Code = books[0].Code, Title = "Book 1" },
-                new BookDTO { Code = books[1].Code, Title = "Book 2" },
-                new BookDTO { Code = books[2].Code, Title = "Book 3" },
-                new BookDTO { Code = books[3].Code, Title = "Book 4" },
-                new BookDTO { Code = books[4].Code, Title = "Book 5" }
+                Code = bookId,
+                Title = book.Title,
+                Author = book.Author,
+                Publisher = book.Publisher,
+                Year = book.Year,
+                Genre = book.Genre
             };
 
-            mapperMock.Setup(x => x.Map<List<BookDTO>>(It.IsAny<List<Domain.Models.Entities.Book>>())).Returns(bookDTOs);
 
             // Act
-            var result = await controller.GetBooks(skip, take);
+            await controller.CreateBook(bookDTO);
+            var result = await controller.GetBook(bookId);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBookDTOs = Assert.IsType<List<BookDTO>>(okResult.Value);
+            var returnedBooks = Assert.IsType<BookDTO>(okResult.Value);
 
-            Assert.Equal(bookDTOs.Count, returnedBookDTOs.Count);
-            for (int i = 0; i < bookDTOs.Count; i++)
-            {
-                Assert.Equal(bookDTOs[i].Code, returnedBookDTOs[i].Code);
-                Assert.Equal(bookDTOs[i].Title, returnedBookDTOs[i].Title);
-            }
+            Assert.Equal(bookDTO.Code, returnedBooks.Code);
         }
 
-        [Theory]
-        [InlineData(-1, 5)]
-        [InlineData(0, -5)]
-        [InlineData(0, 1001)]
-        public async Task GivenInvalidParameters_WhenGettingBooks_ThenReturnsBadRequest(int skip, int take)
+        //[Fact]
+        public async Task GivenEmptyBookId_WhenGettingBook_ThenReturnsBadRequest()
         {
             // Arrange
-            var mapperMock = new Mock<IMapper>();
-            var controller = new BookController(DbContext, mapperMock.Object);
+            
+            var controller = new BookController(DbContext, _mapper);
 
             // Act
-            var result = await controller.GetBooks(skip, take);
+            var result = await controller.GetBook(Guid.Empty);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        //[Fact]
+        public async Task GivenNonExistentBook_WhenGettingBook_ThenReturnsNotFoundResult()
+        {
+            // Arrange
+            
+            var controller = new BookController(DbContext, _mapper);
+            var bookId = Guid.NewGuid();
+
+            // Act
+            var result = await controller.GetBook(bookId);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }

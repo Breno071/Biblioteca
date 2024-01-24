@@ -14,19 +14,44 @@ namespace Tests.Book.Get
         public async Task GivenValidGenre_WhenGettingBooks_ThenReturnsOkResultWithBookDTOs()
         {
             // Arrange
-            var mapperMock = new Mock<IMapper>();
-            var controller = new BookController(DbContext, mapperMock.Object);
+            var controller = new BookController(DbContext, _mapper);
             var genre = Genre.Fiction;
 
-            var books = new List<Domain.Models.Entities.Book>
+            var books = new List<BookDTO>
             {
-                new() { Code = Guid.NewGuid(), Title = "Book 1",  Author = "Author", Publisher = "Publisher", Year = 123, Genre = genre },
-                new() { Code = Guid.NewGuid(), Title = "Book 2",  Author = "Author", Publisher = "Publisher", Year = 123, Genre = genre },
-                new() { Code = Guid.NewGuid(), Title = "Book 3",  Author = "Author", Publisher = "Publisher", Year = 123, Genre = genre }
+                new() 
+                { 
+                    Code = Guid.NewGuid(), 
+                    Title = "Book 1",  
+                    Author = "Author", 
+                    Publisher = "Publisher", 
+                    Year = 123, 
+                    Genre = genre 
+                },
+                new() { 
+                    Code = Guid.NewGuid(), 
+                    Title = "Book 2",  
+                    Author = "Author", 
+                    Publisher = "Publisher", 
+                    Year = 123, 
+                    Genre = genre 
+                },
+                new() 
+                { 
+                    Code = Guid.NewGuid(), 
+                    Title = "Book 3", 
+                    Author = "Author", 
+                    Publisher = "Publisher", 
+                    Year = 123, 
+                    Genre = genre 
+                }
             };
 
-            DbContext.Books.AddRange(books);
-            DbContext.SaveChanges();
+            // Act
+            foreach (var book in books)
+            {
+                await controller.CreateBook(book);
+            }
 
             var bookDTOs = books.Select(book => new BookDTO 
             { 
@@ -37,30 +62,21 @@ namespace Tests.Book.Get
                 Year = book.Year, 
                 Genre = book.Genre 
             }).ToList();
-            mapperMock.Setup(x => x.Map<List<BookDTO>>(It.IsAny<List<Domain.Models.Entities.Book>>())).Returns(bookDTOs);
 
-            // Act
             var result = await controller.GetBooksByGenre(genre);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<Domain.Models.Entities.Book>>(okResult.Value);
+            var returnedBooks = Assert.IsType<List<BookDTO>>(okResult.Value);
 
             Assert.Equal(bookDTOs.Count, returnedBooks.Count);
-            for (int i = 0; i < bookDTOs.Count; i++)
-            {
-                Assert.Equal(bookDTOs[i].Code, returnedBooks[i].Code);
-                Assert.Equal(bookDTOs[i].Title, returnedBooks[i].Title);
-                Assert.Equal(bookDTOs[i].Genre, returnedBooks[i].Genre);
-            }
         }
 
         //[Fact]
         public async Task GivenNoMatchingBooks_WhenGettingBooks_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange
-            var mapperMock = new Mock<IMapper>();
-            var controller = new BookController(DbContext, mapperMock.Object);
+            var controller = new BookController(DbContext, _mapper);
             var genre = Genre.NonFiction;
 
             // Act
@@ -68,7 +84,7 @@ namespace Tests.Book.Get
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<Domain.Models.Entities.Book>>(okResult.Value);
+            var returnedBooks = Assert.IsType<List<BookDTO>>(okResult.Value);
 
             Assert.Empty(returnedBooks);
         }

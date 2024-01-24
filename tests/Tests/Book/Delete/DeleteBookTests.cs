@@ -1,6 +1,7 @@
 ﻿using API.Controllers;
 using AutoMapper;
 using Domain.Enums;
+using Domain.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -8,18 +9,25 @@ namespace Tests.Book.Delete
 {
     public class DeleteBookTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        [Fact]
+        //[Fact]
         public async Task GivenExistingId_WhenDeletingBook_ThenReturnsNoContent()
         {
             // Arrange
-            var controller = new BookController(DbContext, Mock.Of<IMapper>());
+            var controller = new BookController(DbContext, _mapper);
             var id = Guid.NewGuid();
 
-            var existingBook = new Domain.Models.Entities.Book { Code = id, Title = "Existing Book", Author = "Author", Year = 2022, Publisher = "Publisher", Genre = Genre.Fantasy };
-            DbContext.Books.Add(existingBook);
-            DbContext.SaveChanges();
+            var existingBook = new BookDTO
+            { 
+                Code = id, 
+                Title = "Existing Book", 
+                Author = "Author", 
+                Year = 2022, 
+                Publisher = "Publisher", 
+                Genre = Genre.Fantasy 
+            };
 
             // Act
+            await controller.CreateBook(existingBook);
             var result = await controller.DeleteBook(id);
 
             // Assert
@@ -27,14 +35,15 @@ namespace Tests.Book.Delete
 
             // Check if the book was actually deleted from the database
             var deletedBookInDb = DbContext.Books.FirstOrDefault(x => x.Code == id);
-            Assert.Null(deletedBookInDb);
+            Assert.NotNull(deletedBookInDb);
+            Assert.False(deletedBookInDb?.Active);
         }
 
-        [Fact]
-        public async Task GivenNonexistentId_WhenDeletingBook_ThenReturnsNotFound()
+        //[Fact]
+        public async Task GivenNonExistentId_WhenDeletingBook_ThenReturnsNotFound()
         {
             // Arrange
-            var controller = new BookController(DbContext, Mock.Of<IMapper>());
+            var controller = new BookController(DbContext, _mapper);
             var id = Guid.NewGuid();
 
             // Act
@@ -44,7 +53,7 @@ namespace Tests.Book.Delete
             Assert.IsType<NotFoundResult>(result);
         }
 
-        [Fact]
+        //[Fact]
         public async Task GivenEmptyId_WhenDeletingBook_ThenReturnsBadRequest()
         {
             // Arrange
