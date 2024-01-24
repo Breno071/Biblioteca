@@ -99,12 +99,10 @@ namespace API.Controllers
             var books = await _context.Books
                 .Where(x => x.Title.Equals(title))
                 .AsNoTracking()
-                .OrderBy(x => x.Title)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
 
-            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
-
-            return Ok(bookDTOs);
+            return Ok(books);
         }
 
         /// <summary>
@@ -160,9 +158,7 @@ namespace API.Controllers
                 .OrderBy(x => x.Title)
                 .ToListAsync();
 
-            var bookDTOs = _mapper.Map<List<BookDTO>>(books);
-
-            return Ok(bookDTOs);
+            return Ok(books);
         }
 
         /// <summary>
