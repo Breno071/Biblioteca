@@ -17,7 +17,7 @@ services:
     volumes:
       - ./entrypoint.sh:/tmp/entrypoint.sh
       - ./setup.sql:/tmp/setup.sql
-    command: chamod +x ./tmp/entrypoint.sh && ./tmp/entrypoint.sh
+    command: chmod +x ./tmp/entrypoint.sh && ./tmp/entrypoint.sh
     restart: always
 
   rabbitmq:
