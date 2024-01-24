@@ -20,15 +20,23 @@ namespace Tests.Book.Get
 
             var books = new List<Domain.Models.Entities.Book>
             {
-                new() { Code = Guid.NewGuid(), Title = "Book 1", Genre = genre },
-                new() { Code = Guid.NewGuid(), Title = "Book 2", Genre = genre },
-                new() { Code = Guid.NewGuid(), Title = "Book 3", Genre = genre }
+                new() { Code = Guid.NewGuid(), Title = "Book 1",  Author = "Author", Publisher = "Publisher", Year = 123, Genre = genre },
+                new() { Code = Guid.NewGuid(), Title = "Book 2",  Author = "Author", Publisher = "Publisher", Year = 123, Genre = genre },
+                new() { Code = Guid.NewGuid(), Title = "Book 3",  Author = "Author", Publisher = "Publisher", Year = 123, Genre = genre }
             };
 
             DbContext.Books.AddRange(books);
             DbContext.SaveChanges();
 
-            var bookDTOs = books.Select(book => new BookDTO { Code = book.Code, Title = book.Title, Genre = book.Genre }).ToList();
+            var bookDTOs = books.Select(book => new BookDTO 
+            { 
+                Code = book.Code, 
+                Title = book.Title, 
+                Author =book.Author,
+                Publisher = book.Publisher, 
+                Year = book.Year, 
+                Genre = book.Genre 
+            }).ToList();
             mapperMock.Setup(x => x.Map<List<BookDTO>>(It.IsAny<List<Domain.Models.Entities.Book>>())).Returns(bookDTOs);
 
             // Act
@@ -36,7 +44,7 @@ namespace Tests.Book.Get
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBookDTOs = Assert.IsType<List<BookDTO>>(okResult.Value);
+            var returnedBookDTOs = Assert.IsType<List<Domain.Models.Entities.Book>>(okResult.Value);
 
             Assert.Equal(bookDTOs.Count, returnedBookDTOs.Count);
             for (int i = 0; i < bookDTOs.Count; i++)
@@ -60,7 +68,7 @@ namespace Tests.Book.Get
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBookDTOs = Assert.IsType<List<BookDTO>>(okResult.Value);
+            var returnedBookDTOs = Assert.IsType<List<Domain.Models.Entities.Book>>(okResult.Value);
 
             Assert.Empty(returnedBookDTOs);
         }
