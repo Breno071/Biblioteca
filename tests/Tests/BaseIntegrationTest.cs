@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Interfaces;
+using Domain.Models.DTO;
 using DotNet.Testcontainers.Builders;
 using Infraestructure.Configuration;
 using Infraestructure.Data;
@@ -25,7 +26,20 @@ namespace Tests
         public BaseIntegrationTest(IntegrationTestWebApiFactory factory) 
         {
             _scope = factory.Services.CreateScope();
-            _mapper = _scope.ServiceProvider.GetRequiredService<IMapper>();
+
+            var configuration = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateProfile("BookProfile", profile =>
+                {
+                    profile.CreateMap<Domain.Models.Entities.Book, BookDTO>().ReverseMap();
+                });
+                cfg.CreateProfile("ClientProfile", profile =>
+                {
+                    profile.CreateMap<Domain.Models.Entities.Client, ClientDTO>().ReverseMap();
+                });
+            });
+            configuration.AssertConfigurationIsValid();
+            _mapper = configuration.CreateMapper();
             _reservationService =_scope.ServiceProvider.GetRequiredService<IReservationService>();
             DbContext = _scope.ServiceProvider.GetRequiredService<BaseDbContext>();
         }
