@@ -56,7 +56,8 @@ namespace Infraestructure.Migrations
                     Publisher = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Genre = table.Column<int>(type: "int", nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    ReservationCode = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ReservationCode = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

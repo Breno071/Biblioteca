@@ -28,5 +28,6 @@ namespace Domain.Models.Entities
         public Genre Genre { get; set; }
 
         public int Stock { get; set; } = 0;
+        public bool Active { get; set; }  = true;
     }
 }
