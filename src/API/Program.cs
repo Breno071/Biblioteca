@@ -7,13 +7,22 @@ using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using System.Text.Json.Serialization;
 using RabbitMQ.Producer;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo()
+    {
+        Title = "Biblioteca",
+        Version = "v1",
+        Description = "API para o gerenciamento de biblioteca",
+    });
+});
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
