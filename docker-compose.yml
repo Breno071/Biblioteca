@@ -46,16 +46,6 @@ services:
     ports:
       - 5023:8080
 
-  # tests:
-  #   image: ${DOCKER_REGISTRY-}tests
-  #   build:
-  #     context: .
-  #     dockerfile: tests/Tests/Dockerfile
-  #   networks:
-  #     - library-network
-  #   depends_on:
-  #     - sqlserver
-
 
 networks:
     library-network:
