@@ -26,24 +26,13 @@ builder.Services
     });
 
 //Configurations
-builder.Services.AddLibraryDbContext(builder.Configuration);
+builder.Services.AddLibraryDbContext();
 
 builder.Services.AddScoped<ConnectionFactory>();
 builder.Services.AddScoped<IProducer, Producer>();
 
 // Inject logging
-builder.Services.AddLogging(options =>
-{
-    var logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.MSSqlServer(
-                    connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
-                    sinkOptions: new MSSqlServerSinkOptions { TableName = "TB_LOG", AutoCreateSqlTable = true }
-                )
-                .CreateLogger();
-
-    options.AddSerilog(logger);
-});
+builder.Services.ConfigureSerilog();
 
 builder.Services.RegisterFeatures();
 

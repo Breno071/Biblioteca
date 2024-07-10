@@ -7,8 +7,16 @@ namespace Infraestructure.Configuration
 {
     public static class DbConfiguration
     {
-        public static void AddLibraryDbContext(this IServiceCollection services, IConfiguration configuration)
+        public static void AddLibraryDbContext(this IServiceCollection services)
         {
+            var currentyDirectory = Directory.GetCurrentDirectory();
+            var parentDirectory = Directory.GetParent(currentyDirectory)!;
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(parentDirectory.FullName)
+                .AddJsonFile("appsettings.json")
+                .Build();
+
             services.AddDbContext<BaseDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
