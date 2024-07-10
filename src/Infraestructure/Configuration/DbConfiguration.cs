@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infraestructure.Configuration
 {
-    public class DbConfiguration
+    public static class DbConfiguration
     {
-        public static void AddDbContext(IServiceCollection services, IConfiguration configuration)
+        public static void AddLibraryDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<BaseDbContext>(options =>
             {
