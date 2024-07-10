@@ -9,7 +9,7 @@ namespace API.Features.Book.Endpoints.DeleteBook
     {
         public override void Configure()
         {
-            Delete($"/web/book/{{{nameof(DeleteBookRequest.Code)}}}");
+            Delete($"/web/book/{{{nameof(DeleteBookRequest.BookId)}}}");
             AllowAnonymous();
             Summary(b =>
             {
@@ -22,12 +22,12 @@ namespace API.Features.Book.Endpoints.DeleteBook
 
         public override async Task<Results<NoContent, NotFound>> ExecuteAsync(DeleteBookRequest req, CancellationToken ct)
         {
-            var book = await Resolve<IGetBookService>().GetBookByIdAsync(req.Code, ct);
+            var book = await Resolve<IGetBookService>().GetBookByIdAsync(req.BookId, ct);
 
             if (book == null)
                 return TypedResults.NotFound();
 
-            await Resolve<IDeleteBookService>().DeleteBookAsync(req.Code, ct);
+            await Resolve<IDeleteBookService>().DeleteBookAsync(req.BookId, ct);
             return TypedResults.NoContent();
         }
     }

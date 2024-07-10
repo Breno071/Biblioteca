@@ -34,7 +34,7 @@ namespace Tests.Book.Delete
             Assert.IsType<NoContentResult>(result);
 
             // Check if the book was actually deleted from the database
-            var deletedBookInDb = DbContext.Books.FirstOrDefault(x => x.Code == id);
+            var deletedBookInDb = DbContext.Books.FirstOrDefault(x => x.BookId == id);
             Assert.NotNull(deletedBookInDb);
             Assert.False(deletedBookInDb?.Active);
         }

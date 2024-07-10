@@ -26,14 +26,14 @@ namespace API.Features.Reservation.Services
             await using var scope = _serviceScopeFactory.CreateAsyncScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<BaseDbContext>();
 
-            var client = await dbContext.Clients.SingleAsync(c => c.Code == req.ClientId, cancellationToken: ct);
-            var books = await dbContext.Books.Where(b => req.Books.Contains(b.Code)).ToListAsync(ct);
+            var client = await dbContext.Clients.SingleAsync(c => c.ClientId == req.ClientId, cancellationToken: ct);
+            var books = await dbContext.Books.Where(b => req.Books.Contains(b.BookId)).ToListAsync(ct);
 
             var reservationId = Guid.NewGuid();
 
             var reservation = new Domain.Models.Entities.Reservation
             {
-                Code = reservationId,
+                ReservationId = reservationId,
                 Client = client,
                 Books = books,
                 ReservationDate = DateTime.Now,
@@ -46,8 +46,8 @@ namespace API.Features.Reservation.Services
             return new MakeReservationResponse
             {
                 ReservationId = reservationId,
-                ClientId = client.Code,
-                BookIds = books.Select(b => b.Code).ToList(),
+                ClientId = client.ClientId,
+                BookIds = books.Select(b => b.BookId).ToList(),
                 ReservationDate = reservation.ReservationDate,
                 ReturnDate = reservation.ReturnDate,
                 IsReturned = reservation.IsReturned
@@ -59,7 +59,7 @@ namespace API.Features.Reservation.Services
             await using var scope = _serviceScopeFactory.CreateAsyncScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<BaseDbContext>();
 
-            var reservation = await dbContext.Reservations.SingleAsync(r => r.Code == req.ReservationId, cancellationToken: ct);
+            var reservation = await dbContext.Reservations.SingleAsync(r => r.ReservationId == req.ReservationId, cancellationToken: ct);
 
             reservation.ReturnDate = DateTime.Now;
             reservation.IsReturned = true;

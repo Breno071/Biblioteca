@@ -14,7 +14,7 @@ namespace API.Features.Book.Services
         {
             var book = new Domain.Models.Entities.Book
             {
-                Code = Guid.NewGuid(),
+                BookId = Guid.NewGuid(),
                 Title = request.Title,
                 Author = request.Author,
                 Year = request.Year,
@@ -27,7 +27,7 @@ namespace API.Features.Book.Services
 
             return new CreateBookResponse
             {
-                Code = book.Code,
+                BookId = book.BookId,
                 Title = book.Title,
                 Author = book.Author,
                 Year = book.Year,

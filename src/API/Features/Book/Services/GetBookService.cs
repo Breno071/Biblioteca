@@ -7,7 +7,7 @@ namespace API.Features.Book.Services
 {
     public interface IGetBookService
     {
-        Task<Domain.Models.Entities.Book?> GetBookByIdAsync(Guid code, CancellationToken ct);
+        Task<Domain.Models.Entities.Book?> GetBookByIdAsync(Guid bookId, CancellationToken ct);
         Task<List<Domain.Models.Entities.Book>> GetBooksByTitleAsync(string title, CancellationToken ct);
         Task<List<Domain.Models.Entities.Book>> GetBooksByAuthorAsync(string author, CancellationToken ct);
         Task<List<Domain.Models.Entities.Book>> GetBooksByYearAsync(int year, CancellationToken ct);
@@ -29,9 +29,9 @@ namespace API.Features.Book.Services
 
         }
 
-        public Task<Domain.Models.Entities.Book?> GetBookByIdAsync(Guid code, CancellationToken ct)
+        public Task<Domain.Models.Entities.Book?> GetBookByIdAsync(Guid bookId, CancellationToken ct)
         {
-            return dbContext.Books.SingleOrDefaultAsync(b => b.Code == code && b.Active, ct);
+            return dbContext.Books.SingleOrDefaultAsync(b => b.BookId == bookId && b.Active, ct);
         }
 
         public Task<List<Domain.Models.Entities.Book>> GetBooksByPublisherAsync(string publisher, CancellationToken ct)

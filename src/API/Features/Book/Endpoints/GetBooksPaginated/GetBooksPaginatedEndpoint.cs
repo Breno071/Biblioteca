@@ -29,7 +29,7 @@ namespace API.Features.Book.Endpoints.GetBooksPaginated
 
             return TypedResults.Ok(result.ConvertAll(b => new BookDetailsDto
             {
-                Code = b.Code,
+                BookId = b.BookId,
                 Title = b.Title,
                 Year = b.Year,
                 Author = b.Author,

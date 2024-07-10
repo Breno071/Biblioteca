@@ -30,7 +30,7 @@ namespace API.Features.Book.Endpoints.GetBooksByTitle
             return result is not null
                 ? TypedResults.Ok(result.ConvertAll(x => new BookDetailsDto()
                 {
-                    Code = x.Code,
+                    BookId = x.BookId,
                     Title = x.Title,
                     Author = x.Author,
                     Genre = x.Genre,

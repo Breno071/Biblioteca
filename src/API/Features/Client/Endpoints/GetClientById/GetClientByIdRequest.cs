@@ -7,6 +7,6 @@ namespace API.Features.Client.Endpoints.GetClientById
     {
         [Required]
         [FromRoute]
-        public Guid Code { get; set; }
+        public Guid ClientId { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Tests.Stock
             var bookId = Guid.NewGuid();
             DbContext.Books.Add(new Domain.Models.Entities.Book 
             { 
-                Code = bookId, 
+                BookId = bookId, 
                 Author = "Teste", 
                 Genre = Genre.Adventure,
                 Publisher = "Publisher", 

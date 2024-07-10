@@ -14,7 +14,7 @@ namespace API.Features.Client.Services
         {
             var client = new Domain.Models.Entities.Client
             {
-                Code = Guid.NewGuid(),
+                ClientId = Guid.NewGuid(),
                 Name = request.Name,
                 Email = request.Email,
             };
@@ -24,7 +24,7 @@ namespace API.Features.Client.Services
 
             return new CreateClientResponse
             {
-                Code = client.Code,
+                ClientId = client.ClientId,
                 Email = client.Email,
                 Name = client.Name
             };

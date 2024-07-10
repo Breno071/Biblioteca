@@ -10,7 +10,7 @@ namespace API.Features.Book.Endpoints.UpdateBook
     {
         [Required]
         [FromRoute]
-        public Guid Code { get; set; }
+        public Guid BookId { get; set; }
 
         [Required(ErrorMessage = "O campo Title deve ser preenchido.")]
         [MaxLength(255)]

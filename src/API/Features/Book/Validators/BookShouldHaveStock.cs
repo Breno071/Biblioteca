@@ -26,7 +26,7 @@ namespace API.Features.Book.Validators
             var book = await dbContext.Books
                 .AsNoTracking()
                 .SingleOrDefaultAsync(b =>
-                    b.Code == value &&
+                    b.BookId == value &&
                     b.Active, cancellationToken: cancellation);
 
             //Se o livro não existir ele cai em outro validator(BookShouldExistValidator)

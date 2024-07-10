@@ -31,7 +31,7 @@ namespace API.Features.Client.Endpoints.GetClientByEmail
 
             var response = new ClientDetailsDto()
             {
-                Code = client.Code,
+                ClientId = client.ClientId,
                 Email = client.Email,
                 Name = client.Name
             };

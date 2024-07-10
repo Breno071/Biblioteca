@@ -25,7 +25,7 @@ namespace API.Features.Client.Endpoints.CreateClient
         {
             var result = await Resolve<ICreateClientService>().CreateClientAsync(req, ct);
 
-            return TypedResults.Created(HttpContext.CreatedUri(result.Code), result);
+            return TypedResults.Created(HttpContext.CreatedUri(result.ClientId), result);
         }
     }
 }

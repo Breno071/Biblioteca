@@ -66,7 +66,7 @@ namespace Tests.Client.Update
 
             var existingClient = new Domain.Models.Entities.Client 
             { 
-                Code = id, 
+                ClientId = id, 
                 Name = "Client 1", 
                 Email = "client@example.com" 
             };

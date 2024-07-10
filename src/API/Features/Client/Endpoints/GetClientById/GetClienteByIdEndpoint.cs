@@ -10,7 +10,7 @@ namespace API.Features.Client.Endpoints.GetClientById
     {
         public override void Configure()
         {
-            Get($"/web/client/code/{{{nameof(GetClientByIdRequest.Code)}}}");
+            Get($"/web/client/{{{nameof(GetClientByIdRequest.ClientId)}}}");
             AllowAnonymous();
             Summary(x =>
             {
@@ -25,14 +25,14 @@ namespace API.Features.Client.Endpoints.GetClientById
 
         public override async Task<Results<Ok<ClientDetailsDto>, NotFound>> ExecuteAsync(GetClientByIdRequest req, CancellationToken ct)
         {
-            var client = await Resolve<IGetClientService>().GetClientByIdAsync(req.Code, ct);
+            var client = await Resolve<IGetClientService>().GetClientByIdAsync(req.ClientId, ct);
 
             if (client is null)
                 return TypedResults.NotFound();
 
             var response = new ClientDetailsDto
             {
-                Code = client.Code,
+                ClientId = client.ClientId,
                 Email = client.Email,
                 Name = client.Name
             };

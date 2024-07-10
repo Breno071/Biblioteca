@@ -24,7 +24,7 @@ namespace API.Features.Client.Endpoints.UpdateClient
 
         public override async Task<Results<Ok<ClientDetailsDto>, NotFound>> ExecuteAsync(UpdateClientRequest req, CancellationToken ct)
         {
-            var client = await Resolve<IGetClientService>().GetClientByIdAsync(req.Code, ct);
+            var client = await Resolve<IGetClientService>().GetClientByIdAsync(req.ClientId, ct);
 
             if (client is null)
                 return TypedResults.NotFound();

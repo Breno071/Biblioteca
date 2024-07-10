@@ -21,13 +21,13 @@ namespace Tests.Client.Get
             {
                 new() 
                 { 
-                    Code = Guid.NewGuid(), 
+                    ClientId = Guid.NewGuid(), 
                     Name = "Client 1", 
                     Email = email 
                 },
                 new() 
                 { 
-                    Code = Guid.NewGuid(), 
+                    ClientId = Guid.NewGuid(), 
                     Name = "Client 2", 
                     Email = email 
                 }
@@ -40,7 +40,7 @@ namespace Tests.Client.Get
 
             var clientDTOs = clients.Select(client => new ClientDTO 
             { 
-                Code = client.Code, 
+                Code = client.ClientId, 
                 Name = client.Name, 
                 Email = client.Email 
             }).ToList();

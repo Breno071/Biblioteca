@@ -4,7 +4,7 @@ namespace API.Features.Book.DTOs
 {
     public class BookDetailsDto
     {
-        public Guid Code { get; set; } = Guid.NewGuid();
+        public Guid BookId { get; set; } = Guid.NewGuid();
         public string Title { get; set; }
         public string Author { get; set; }
         public int Year { get; set; }

@@ -6,7 +6,7 @@ namespace Domain.Models.Entities
     public class Client
     {
         [Key]
-        public Guid Code { get; set; } = Guid.NewGuid();
+        public Guid ClientId { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "O campo Name deve ser preenchido.")]
         [MaxLength(255, ErrorMessage = "O campo Name deve ter no máximo 255 caracteres.")]

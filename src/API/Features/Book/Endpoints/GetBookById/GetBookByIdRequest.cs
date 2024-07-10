@@ -8,6 +8,6 @@ namespace API.Features.Book.Endpoints.GetBook
     {
         [FromRoute]
         [Required]
-        public Guid Code { get; set; }
+        public Guid BookId { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace Domain.Models.Entities
         public event EventHandler<ReservationFinishedEventArgs> ReservationFinished;
 
         [Key]
-        public Guid Code { get; set; } = Guid.NewGuid();
+        public Guid ReservationId { get; set; } = Guid.NewGuid();
         [Required]
         public Client Client { get; set; }
         [Required]
@@ -18,7 +18,7 @@ namespace Domain.Models.Entities
         [Required]
         public DateTime ReservationDate { get; set; }
         [Required]
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
         public bool IsReturned { get; set; } = false;
 
         public virtual void OnReservationCreated()

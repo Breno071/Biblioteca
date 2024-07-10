@@ -56,7 +56,7 @@ namespace Tests.Stock
             var okResult = Assert.IsType<OkObjectResult>(result);
             var reservation = Assert.IsType<Reservation>(okResult.Value);
 
-            Assert.Equal(clientCode, reservation.Client.Code);
+            Assert.Equal(clientCode, reservation.Client.ClientId);
             Assert.Equal(bookCodes.Count, reservation.Books.Count);
             Assert.Equal(returnDate, reservation.ReturnDate);
         }
@@ -110,7 +110,7 @@ namespace Tests.Stock
             // Act
             DbContext.Clients.Add(new Domain.Models.Entities.Client 
             { 
-                Code = clientCode ,
+                ClientId = clientCode ,
                 Name = "Irineu",
                 Email = "irineu@email.com",
             });
@@ -132,13 +132,13 @@ namespace Tests.Stock
             // Act
             DbContext.Clients.Add(new Domain.Models.Entities.Client 
             { 
-                Code = clientCode ,
+                ClientId = clientCode ,
                 Name = "Irineu",
                 Email = "irineu@email.com",
             });
             DbContext.Books.Add(new Domain.Models.Entities.Book 
             {
-                Code = bookCode,
+                BookId = bookCode,
                 Title = "New Book",
                 Author = "Author",
                 Publisher = "Publisher",

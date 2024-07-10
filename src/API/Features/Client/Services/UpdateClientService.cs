@@ -13,7 +13,7 @@ namespace API.Features.Client.Services
     {
         public Task<ClientDetailsDto> UpdateClientAsync(UpdateClientRequest request, CancellationToken ct)
         {
-            var Client = dbContext.Clients.SingleOrDefault(b => b.Code == request.Code)!;
+            var Client = dbContext.Clients.SingleOrDefault(b => b.ClientId == request.ClientId)!;
 
             Client.Email = request.Email;
             Client.Name = request.Name;
@@ -23,7 +23,7 @@ namespace API.Features.Client.Services
 
             return Task.FromResult(new ClientDetailsDto
             {
-                Code = Client.Code,
+                ClientId = Client.ClientId,
                 Email = Client.Email,
                 Name = Client.Name
             });

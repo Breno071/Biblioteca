@@ -25,7 +25,7 @@ namespace API.Features.Client.Validators
 
             var clientExist = await dbContext.Clients
                 .AsNoTracking()
-                .AnyAsync(c => c.Code == value, cancellationToken: cancellation);
+                .AnyAsync(c => c.ClientId == value, cancellationToken: cancellation);
 
             return !clientExist;
         }

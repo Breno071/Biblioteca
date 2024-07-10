@@ -7,7 +7,7 @@ namespace Domain.Models.Entities
     public class Book
     {
         [Key]
-        public Guid Code { get; set; } = Guid.NewGuid();
+        public Guid BookId { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "O campo Title deve ser preenchido.")]
         [MaxLength(255)]

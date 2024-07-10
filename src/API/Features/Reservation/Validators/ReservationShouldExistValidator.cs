@@ -26,7 +26,7 @@ namespace API.Features.Reservation.Validators
             var reservationExist = await dbContext.Reservations
                 .AsNoTracking()
                 .AnyAsync(r =>
-                    r.Code == value &&
+                    r.ReservationId == value &&
                     r.IsReturned &&
                     r.ReturnDate != null, cancellationToken: cancellation);
 

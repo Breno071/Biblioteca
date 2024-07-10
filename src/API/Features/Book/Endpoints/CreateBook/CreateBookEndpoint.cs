@@ -1,11 +1,7 @@
-﻿using API.Features.Book.Endpoints.GetBook;
-using API.Features.Book.Services;
-using API.Features.Client.Services;
+﻿using API.Features.Book.Services;
 using API.Shared.Extensions;
-using Domain.Models.DTO;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Features.Book.Endpoints.CreateBook
 {
@@ -34,7 +30,7 @@ namespace API.Features.Book.Endpoints.CreateBook
 
             var result = await Resolve<ICreateBookService>().CreateBookAsync(req, ct);
 
-            return TypedResults.Created(HttpContext.CreatedUri(result.Code), result);
+            return TypedResults.Created(HttpContext.CreatedUri(result.BookId), result);
         }
     }
 }

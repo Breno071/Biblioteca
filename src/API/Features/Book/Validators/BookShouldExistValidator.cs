@@ -25,7 +25,7 @@ namespace API.Features.Book.Validators
 
             var bookExist = await dbContext.Books
                 .AsNoTracking()
-                .AnyAsync(b => b.Code == value && b.Active, cancellationToken: cancellation);
+                .AnyAsync(b => b.BookId == value && b.Active, cancellationToken: cancellation);
 
             return !bookExist;
         }

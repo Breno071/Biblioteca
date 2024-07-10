@@ -39,7 +39,7 @@ namespace Tests.Client.Create
             Assert.Equal(clientDTO.Email, createdClient.Email);
 
             // Check if the client was actually created in the database
-            var createdClientInDb = DbContext.Clients.FirstOrDefault(x => x.Code == clientDTO.Code);
+            var createdClientInDb = DbContext.Clients.FirstOrDefault(x => x.ClientId == clientDTO.Code);
             Assert.NotNull(createdClientInDb);
             Assert.Equal(clientDTO.Name, createdClientInDb.Name);
             Assert.Equal(clientDTO.Email, createdClientInDb.Email);
@@ -59,7 +59,7 @@ namespace Tests.Client.Create
             };
             var existingClient = new Domain.Models.Entities.Client
             {
-                Code = existingClientDTO.Code,
+                ClientId = existingClientDTO.Code,
                 Name = existingClientDTO.Name,
                 Email = existingClientDTO.Email
             };
@@ -83,7 +83,7 @@ namespace Tests.Client.Create
             var existingClientEmail = "existingclient@example.com";
             var existingClient = new Domain.Models.Entities.Client 
             { 
-                Code = Guid.NewGuid(), 
+                ClientId = Guid.NewGuid(), 
                 Name = "Existing Client", 
                 Email = existingClientEmail 
             };

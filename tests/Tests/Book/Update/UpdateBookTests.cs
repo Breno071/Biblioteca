@@ -53,7 +53,7 @@ namespace Tests.Book.Update
 
             // Check if the book was actually updated in the database
             DbContext.ChangeTracker.Clear();
-            var updatedBookInDb = DbContext.Books.FirstOrDefault(x => x.Code == id);
+            var updatedBookInDb = DbContext.Books.FirstOrDefault(x => x.BookId == id);
             Assert.NotNull(updatedBookInDb);
             Assert.Equal(updatedBookDTO.Title, updatedBookInDb.Title);
             Assert.Equal(updatedBookDTO.Author, updatedBookInDb.Author);

@@ -21,7 +21,7 @@ namespace Tests.Book.Get
             {
                 new() 
                 { 
-                    Code = Guid.NewGuid(), 
+                    BookId = Guid.NewGuid(), 
                     Title = "Book 1", 
                     Year = year, 
                     Author = "Author", 
@@ -31,7 +31,7 @@ namespace Tests.Book.Get
                 },
                 new() 
                 { 
-                    Code = Guid.NewGuid(), 
+                    BookId = Guid.NewGuid(), 
                     Title = "Book 2", 
                     Year = year, 
                     Author = "Author", 
@@ -40,7 +40,7 @@ namespace Tests.Book.Get
                 },
                 new() 
                 { 
-                    Code = Guid.NewGuid(), 
+                    BookId = Guid.NewGuid(), 
                     Title = "Book 3", 
                     Year = year, 
                     Author = "Author", 
@@ -56,7 +56,7 @@ namespace Tests.Book.Get
 
             var bookDTOs = books.Select(book => new BookDTO 
             { 
-                Code = book.Code, 
+                Code = book.BookId, 
                 Title = book.Title, 
                 Year = book.Year,
                 Author = book.Author,

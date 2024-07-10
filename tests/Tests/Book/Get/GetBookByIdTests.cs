@@ -20,7 +20,7 @@ namespace Tests.Book.Get
 
             var book = new Domain.Models.Entities.Book
             {
-                Code = bookId,
+                BookId = bookId,
                 Title = "Test Book",
                 Author = "Author",
                 Publisher = "publisher",

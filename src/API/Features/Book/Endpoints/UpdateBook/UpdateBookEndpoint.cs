@@ -10,7 +10,7 @@ namespace API.Features.Book.Endpoints.UpdateBook
     {
         public override void Configure()
         {
-            Put($"/web/book/{{{nameof(UpdateBookRequest.Code)}}}");
+            Put($"/web/book/{{{nameof(UpdateBookRequest.BookId)}}}");
             AllowAnonymous();
             Summary(s =>
             {
@@ -24,7 +24,7 @@ namespace API.Features.Book.Endpoints.UpdateBook
 
         public override async Task<Results<Ok<BookDetailsDto>, NotFound>> ExecuteAsync(UpdateBookRequest req, CancellationToken ct)
         {
-            var book = await Resolve<IGetBookService>().GetBookByIdAsync(req.Code, ct);
+            var book = await Resolve<IGetBookService>().GetBookByIdAsync(req.BookId, ct);
 
             if (book is null)
                 return TypedResults.NotFound();

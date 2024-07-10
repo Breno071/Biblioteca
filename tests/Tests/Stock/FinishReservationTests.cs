@@ -52,7 +52,7 @@ namespace Tests.Stock
             Assert.IsType<OkObjectResult>(reservationResult);
             var reservation = Assert.IsType<OkObjectResult>(reservationResult).Value as Reservation;
             Assert.NotNull(reservation);
-            var reservationCode = reservation.Code;
+            var reservationCode = reservation.ReservationId;
             var result = await reservationController.FinishReservation(reservationCode);
             Assert.IsType<OkResult>(result);
         }

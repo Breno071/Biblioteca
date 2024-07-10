@@ -75,7 +75,7 @@ namespace Tests.Stock
             var bookId = Guid.NewGuid();
             var stock = 5;
 
-            var book = await DbContext.Books.FirstOrDefaultAsync(x => x.Code == bookId);
+            var book = await DbContext.Books.FirstOrDefaultAsync(x => x.BookId == bookId);
 
             // Act
             var result = await controller.SetBookStock(bookId, stock);
@@ -93,7 +93,7 @@ namespace Tests.Stock
             var bookId = Guid.NewGuid();
             var stock = 5;
 
-            var book = await DbContext.Books.FirstOrDefaultAsync(x => x.Code == bookId);
+            var book = await DbContext.Books.FirstOrDefaultAsync(x => x.BookId == bookId);
 
             // Act
             var result = await controller.SetBookStock(bookId, stock);

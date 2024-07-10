@@ -13,7 +13,7 @@ namespace API.Features.Book.Services
     {
         public Task<BookDetailsDto> UpdateBookAsync(UpdateBookRequest request, CancellationToken ct)
         {
-            var book = dbContext.Books.SingleOrDefault(b => b.Code == request.Code && b.Active)!;
+            var book = dbContext.Books.SingleOrDefault(b => b.BookId == request.BookId && b.Active)!;
 
             book.Title = request.Title;
             book.Author = request.Author;
@@ -27,7 +27,7 @@ namespace API.Features.Book.Services
 
             return Task.FromResult(new BookDetailsDto
             {
-                Code = book.Code,
+                BookId = book.BookId,
                 Title = book.Title,
                 Author = book.Author,
                 Year = book.Year,

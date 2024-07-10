@@ -38,7 +38,7 @@ namespace Tests.Book.Create
             Assert.Equal(newBookDTO.Year, createdBook.Year);
 
             // Check if the book was actually created in the database
-            var createdBookInDb = DbContext.Books.FirstOrDefault(x => x.Code == newBookDTO.Code);
+            var createdBookInDb = DbContext.Books.FirstOrDefault(x => x.BookId == newBookDTO.Code);
             Assert.NotNull(createdBookInDb);
             Assert.Equal(newBookDTO.Title, createdBookInDb.Title);
             Assert.Equal(newBookDTO.Author, createdBookInDb.Author);
