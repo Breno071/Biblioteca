@@ -11,10 +11,11 @@ namespace Infraestructure.Configuration
         {
             var currentyDirectory = Directory.GetCurrentDirectory();
             var parentDirectory = Directory.GetParent(currentyDirectory)!;
+            var solutionFolder = Directory.GetParent(parentDirectory.FullName)!;
 
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(parentDirectory.FullName)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .SetBasePath(solutionFolder.FullName)
+                .AddJsonFile("appsettings.json")
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<BaseDbContext>();

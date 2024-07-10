@@ -11,9 +11,10 @@ namespace Infraestructure.Configuration
         {
             var currentyDirectory = Directory.GetCurrentDirectory();
             var parentDirectory = Directory.GetParent(currentyDirectory)!;
+            var solutionFolder = Directory.GetParent(parentDirectory.FullName)!;
 
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(parentDirectory.FullName)
+                .SetBasePath(solutionFolder.FullName)
                 .AddJsonFile("appsettings.json")
                 .Build();
 
