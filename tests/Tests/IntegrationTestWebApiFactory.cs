@@ -1,5 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using Infraestructure.Data;
+using Infraestructure.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -19,16 +20,6 @@ namespace Tests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureAppConfiguration((context, config) =>
-            {
-                var currentyDirectory = Directory.GetCurrentDirectory();
-                var parentDirectory = Directory.GetParent(currentyDirectory)!;
-                var solutionFolder = Directory.GetParent(parentDirectory.FullName)!;
-
-                config.SetBasePath(solutionFolder.FullName);
-                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            });
-
             builder.ConfigureTestServices(services =>
             {
                 var descriptorType = typeof(DbContextOptions<BaseDbContext>);

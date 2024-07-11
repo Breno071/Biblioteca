@@ -23,11 +23,6 @@ namespace API.Features.Book.Endpoints.CreateBook
 
         public override async Task<Results<Created<CreateBookResponse>, BadRequest>> ExecuteAsync(CreateBookRequest req, CancellationToken ct)
         {
-            var livro = await Resolve<IGetBookService>().GetBooksByTitleAsync(req.Title, ct);
-
-            if (livro is not null)
-                return TypedResults.BadRequest();
-
             var result = await Resolve<ICreateBookService>().CreateBookAsync(req, ct);
 
             return TypedResults.Created(HttpContext.CreatedUri(result.BookId), result);

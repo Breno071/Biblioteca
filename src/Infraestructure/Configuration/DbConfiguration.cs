@@ -1,4 +1,5 @@
 ﻿using Infraestructure.Data;
+using Infraestructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,9 +10,7 @@ namespace Infraestructure.Configuration
     {
         public static void AddLibraryDbContext(this IServiceCollection services)
         {
-            var currentyDirectory = Directory.GetCurrentDirectory();
-            var parentDirectory = Directory.GetParent(currentyDirectory)!;
-            var solutionFolder = Directory.GetParent(parentDirectory.FullName)!;
+            var solutionFolder = DirectoryHelper.FindSolutionDirectory();
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(solutionFolder.FullName)
@@ -22,7 +21,7 @@ namespace Infraestructure.Configuration
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
-        }
+        }        
 
         public static void InitializeMigration(IServiceProvider serviceProvider)
         {

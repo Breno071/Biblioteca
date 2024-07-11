@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using FastEndpoints;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.Features.Book.Endpoints.CreateBook

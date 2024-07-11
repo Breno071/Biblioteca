@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Infraestructure.Helpers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
@@ -9,9 +10,7 @@ namespace Infraestructure.Configuration
     {
         public static IServiceCollection ConfigureSerilog(this IServiceCollection services)
         {
-            var currentyDirectory = Directory.GetCurrentDirectory();
-            var parentDirectory = Directory.GetParent(currentyDirectory)!;
-            var solutionFolder = Directory.GetParent(parentDirectory.FullName)!;
+            var solutionFolder = DirectoryHelper.FindSolutionDirectory();
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(solutionFolder.FullName)

@@ -1,10 +1,8 @@
 ﻿using API.Features.Book.Endpoints.CreateBook;
 using Domain.Enums;
-using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Json;
 using FluentAssertions;
 using System.Net;
-using Org.BouncyCastle.Ocsp;
+using System.Net.Http.Json;
 
 namespace Tests.Book.Create
 {
