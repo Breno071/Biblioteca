@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace API.Features.Book.Endpoints.GetBooksPaginated
 {
-    public class GetBooksPaginatedEndpoint : Endpoint<GetBooksPaginatedRequest, Results<Ok<List<BookDetailsDto>>, BadRequest>>
+    public class GetBooksPaginatedEndpoint : Endpoint<GetBooksPaginatedRequest, Ok<List<BookDetailsDto>>>
     {
         public override void Configure()
         {
-            Get($"/web/books");
+            Get($"/web/books/");
             AllowAnonymous();
             Summary(x => 
             {
@@ -20,11 +20,8 @@ namespace API.Features.Book.Endpoints.GetBooksPaginated
             Version(BookFeature.Version);
         }
 
-        public override async Task<Results<Ok<List<BookDetailsDto>>, BadRequest>> ExecuteAsync(GetBooksPaginatedRequest req, CancellationToken ct)
-        {
-            if(req.PageSize > 1000)
-                return TypedResults.BadRequest();
-               
+        public override async Task<Ok<List<BookDetailsDto>>> ExecuteAsync(GetBooksPaginatedRequest req, CancellationToken ct)
+        {      
             var result = await Resolve<IGetBookService>().GetPaginatedBooksAsync(req.Page, req.PageSize, ct);
 
             return TypedResults.Ok(result.ConvertAll(b => new BookDetailsDto

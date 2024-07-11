@@ -1,107 +1,66 @@
-﻿using API.Controllers;
-using AutoMapper;
+﻿using API.Features.Book.DTOs;
+using API.Features.Book.Endpoints.UpdateBook;
+using AutoFixture;
 using Domain.Enums;
-using Domain.Models.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using FluentAssertions;
+using System.Net;
+using System.Net.Http.Json;
+using Tests.SharedUtils;
 
 namespace Tests.Book.Update
 {
     public class UpdateBookTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/book/";
+        private readonly Fixture _autoFixture = new Fixture();
+
         [Fact]
         public async Task GivenValidIdAndBookDTO_WhenUpdatingBook_ThenReturnsOkResultWithUpdatedBook()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var id = Guid.NewGuid();
+            var book = (await _autoFixture.AddBooksOnDb(DbContext, 1)).Single();
 
-            var existingBook = new BookDTO
+            UpdateBookRequest request = new UpdateBookRequest
             {
-                Code = id,
-                Title = "Existing Book",
-                Author = "Author",
-                Year = 2022,
-                Genre = Genre.NonFiction,
-                Publisher = "Publisher"
+                Author = "JR Token",
+                Title = "O senhor dos aneis",
+                Genre = Genre.Adventure,
+                Publisher = "Token",
+                Stock = 1,
+                Year = 2000
             };
 
-            var updatedBookDTO = new BookDTO
-            {
-                Code = id,
-                Title = "Updated Book",
-                Author = "New Author",
-                Year = 2023,
-                Publisher = "Publisher",
-                Genre = Genre.Mystery
-            };
-
-            // Act
-            await controller.CreateBook(existingBook);
-            DbContext.ChangeTracker.Clear();
-            var result = await controller.UpdateBook(id, updatedBookDTO);
+            // Act            
+            var rsp = await AnonymousUser.PutAsJsonAsync(string.Concat(Path, book.BookId), request);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBook = Assert.IsType<BookDTO>(okResult.Value);
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
 
-            Assert.Equal(updatedBookDTO.Code, returnedBook.Code);
-            Assert.Equal(updatedBookDTO.Title, returnedBook.Title);
-            Assert.Equal(updatedBookDTO.Author, returnedBook.Author);
-            Assert.Equal(updatedBookDTO.Year, returnedBook.Year);
+            var res = await rsp.Content.ReadFromJsonAsync<BookDetailsDto>();
+            res.Should().NotBeNull();
 
-            // Check if the book was actually updated in the database
-            DbContext.ChangeTracker.Clear();
-            var updatedBookInDb = DbContext.Books.FirstOrDefault(x => x.BookId == id);
-            Assert.NotNull(updatedBookInDb);
-            Assert.Equal(updatedBookDTO.Title, updatedBookInDb.Title);
-            Assert.Equal(updatedBookDTO.Author, updatedBookInDb.Author);
-            Assert.Equal(updatedBookDTO.Year, updatedBookInDb.Year);
-        }
-
-        [Fact]
-        public async Task GivenInvalidId_WhenUpdatingBook_ThenReturnsBadRequest()
-        {
-            // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var id = Guid.NewGuid();
-
-            var updatedBookDTO = new BookDTO 
-            { 
-                Code = Guid.NewGuid(), 
-                Title = "Updated Book", 
-                Author = "New Author", 
-                Year = 2023 
-            };
-
-            // Act
-            var result = await controller.UpdateBook(id, updatedBookDTO);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            res!.Title.Should().Be(request.Title);
+            res!.Author.Should().Be(request.Author);
+            res!.Publisher.Should().Be(request.Publisher);
+            res!.Genre.Should().Be(request.Genre);
+            res!.Year.Should().Be(request.Year);
         }
 
         [Fact]
         public async Task GivenNonExistentId_WhenUpdatingBook_ThenReturnsNotFound()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var id = Guid.NewGuid();
-
-            var updatedBookDTO = new BookDTO 
-            { 
-                Code = id, 
-                Title = "Updated Book", 
-                Author = "New Author", 
-                Year = 2023 
-            };
+            var bookId = Guid.NewGuid();
 
             // Act
-            var result = await controller.UpdateBook(id, updatedBookDTO);
+            var rsp = await AnonymousUser.PutAsJsonAsync(string.Concat(Path, bookId), new UpdateBookRequest());
+            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
+
+            res.Should().BeEmpty();
         }
     }
 }

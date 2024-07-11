@@ -18,6 +18,7 @@
     </PackageReference>
     <PackageReference Include="AutoFixture" Version="4.18.1" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="FastEndpoints.Testing" Version="5.22.0" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />

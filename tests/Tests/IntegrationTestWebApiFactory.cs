@@ -1,15 +1,12 @@
-﻿using Docker.DotNet.Models;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Images;
+﻿using DotNet.Testcontainers.Builders;
 using Infraestructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;
-using Testcontainers.PostgreSql;
 
 namespace Tests
 {
@@ -17,29 +14,34 @@ namespace Tests
     {
         private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
                             .WithImage("mcr.microsoft.com/mssql/server:2019-latest")
-                            .WithWaitStrategy(
-                                Wait.ForUnixContainer()
-                                    .UntilPortIsAvailable(1433))
-                        .Build();
+                            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1433))
+                            .Build();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                var currentyDirectory = Directory.GetCurrentDirectory();
+                var parentDirectory = Directory.GetParent(currentyDirectory)!;
+                var solutionFolder = Directory.GetParent(parentDirectory.FullName)!;
+
+                config.SetBasePath(solutionFolder.FullName);
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            });
+
             builder.ConfigureTestServices(services =>
             {
-                var descriptorType =
-                    typeof(DbContextOptions<BaseDbContext>);
+                var descriptorType = typeof(DbContextOptions<BaseDbContext>);
 
-                var descriptor = services
-                    .SingleOrDefault(s => s.ServiceType == descriptorType);
+                var descriptor = services.SingleOrDefault(s => s.ServiceType == descriptorType);
 
                 if (descriptor is not null)
                 {
                     services.Remove(descriptor);
                 }
 
-                services.AddDbContext<BaseDbContext>(options =>
-                    options.UseSqlServer(_msSqlContainer.GetConnectionString()));
-                services.AddAutoMapper(typeof(Program).Assembly);
+                services.AddHttpClient();
+                services.AddDbContext<BaseDbContext>(options => options.UseSqlServer(_msSqlContainer.GetConnectionString()));
             });
         }
 

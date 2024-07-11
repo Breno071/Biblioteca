@@ -1,82 +1,51 @@
-﻿using API.Controllers;
-using AutoMapper;
+﻿using API.Features.Book.DTOs;
+using AutoFixture;
 using Domain.Enums;
-using Domain.Models.DTO;
-using Domain.Models.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using FluentAssertions;
+using System.Net;
+using System.Net.Http.Json;
+using Tests.SharedUtils;
 
 namespace Tests.Book.Get
 {
     public class GetBookByIdTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        [Fact]
-        public async Task GivenValidBookId_WhenGettingBook_ThenReturnsOkResultWithBookDTO()
-        {
-            // Arrange            
-            var controller = new BookController(DbContext, _mapper);
-            var bookId = Guid.NewGuid();
-
-            var book = new Domain.Models.Entities.Book
-            {
-                BookId = bookId,
-                Title = "Test Book",
-                Author = "Author",
-                Publisher = "publisher",
-                Year = 1234,
-                Genre = Genre.Science
-            };
-
-            var bookDTO = new BookDTO()
-            {
-                Code = bookId,
-                Title = book.Title,
-                Author = book.Author,
-                Publisher = book.Publisher,
-                Year = book.Year,
-                Genre = book.Genre
-            };
-
-
-            // Act
-            await controller.CreateBook(bookDTO);
-            var result = await controller.GetBook(bookId);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<BookDTO>(okResult.Value);
-
-            Assert.Equal(bookDTO.Code, returnedBooks.Code);
-        }
+        private const string Path = "/web/book/";
+        private readonly Fixture _autoFixture = new Fixture();
 
         [Fact]
-        public async Task GivenEmptyBookId_WhenGettingBook_ThenReturnsBadRequest()
+        public async Task GivenValidBookId_WhenGettingBook_ThenReturnsOkResultWithBook()
         {
             // Arrange
-            
-            var controller = new BookController(DbContext, _mapper);
+            var book = (await _autoFixture.AddBooksOnDb(DbContext, 1)).Single();
 
             // Act
-            var result = await controller.GetBook(Guid.Empty);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, book.BookId));
+            var res = await rsp.Content.ReadFromJsonAsync<BookDetailsDto>();
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
+
+            res!.Title.Should().Be(book.Title);
+            res!.Author.Should().Be(book.Author);
+            res!.Publisher.Should().Be(book.Publisher);
+            res!.Genre.Should().Be(book.Genre);
         }
 
         [Fact]
         public async Task GivenNonExistentBook_WhenGettingBook_ThenReturnsNotFoundResult()
         {
             // Arrange
-            
-            var controller = new BookController(DbContext, _mapper);
             var bookId = Guid.NewGuid();
 
             // Act
-            var result = await controller.GetBook(bookId);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, bookId));
+            var res = await rsp.Content.ReadFromJsonAsync<BookDetailsDto>();
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
         }
     }
 }

@@ -1,69 +1,52 @@
-﻿using API.Controllers;
-using AutoMapper;
-using Domain.Enums;
-using Domain.Models.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
+﻿using Domain.Enums;
+using FluentAssertions;
+using System.Net;
 
 namespace Tests.Book.Delete
 {
     public class DeleteBookTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/book/";
+
         [Fact]
         public async Task GivenExistingId_WhenDeletingBook_ThenReturnsNoContent()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var id = Guid.NewGuid();
-
-            var existingBook = new BookDTO
-            { 
-                Code = id, 
-                Title = "Existing Book", 
-                Author = "Author", 
-                Year = 2022, 
-                Publisher = "Publisher", 
-                Genre = Genre.Fantasy 
+            var book = new Domain.Models.Entities.Book
+            {
+                BookId = Guid.NewGuid(),
+                Author = "Irineu",
+                Genre = Genre.Mystery,
+                Active = true,
+                Publisher = "Punisher",
+                Title = "Titulo",
+                Stock = 0,
+                Year = 1990
             };
 
+            DbContext.Books.Add(book);
+            await DbContext.SaveChangesAsync();
+
             // Act
-            await controller.CreateBook(existingBook);
-            var result = await controller.DeleteBook(id);
+            var rsp = await AnonymousUser.DeleteAsync(string.Concat(Path, book.BookId));
 
             // Assert
-            Assert.IsType<NoContentResult>(result);
+            rsp.StatusCode.Should().Be(HttpStatusCode.NoContent, await rsp.Content.ReadAsStringAsync());
 
-            // Check if the book was actually deleted from the database
-            var deletedBookInDb = DbContext.Books.FirstOrDefault(x => x.BookId == id);
-            Assert.NotNull(deletedBookInDb);
-            Assert.False(deletedBookInDb?.Active);
+            DbContext.Books.Single(x => x.BookId == book.BookId && !x.Active).Should().NotBeNull();
         }
 
         [Fact]
         public async Task GivenNonExistentId_WhenDeletingBook_ThenReturnsNotFound()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var id = Guid.NewGuid();
+            var bookId = Guid.NewGuid();
 
             // Act
-            var result = await controller.DeleteBook(id);
+            var rsp = await AnonymousUser.DeleteAsync(string.Concat(Path, bookId));
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
-        }
-
-        [Fact]
-        public async Task GivenEmptyId_WhenDeletingBook_ThenReturnsBadRequest()
-        {
-            // Arrange
-            var controller = new BookController(DbContext, Mock.Of<IMapper>());
-
-            // Act
-            var result = await controller.DeleteBook(Guid.Empty);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
         }
     }
 }

@@ -1,105 +1,67 @@
-﻿using API.Controllers;
-using AutoMapper;
+﻿using API.Features.Book.DTOs;
 using Domain.Enums;
-using Domain.Models.DTO;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using System.Net.Http.Json;
+using System.Net;
 
 namespace Tests.Book.Get
 {
     public class GetBooksByTitleTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/books/title/";
+
         [Fact]
-        public async Task GivenValidTitle_WhenGettingBooks_ThenReturnsOkResultWithBookDTOs()
+        public async Task GivenValidTitle_WhenGettingBooks_ThenReturnsOkResultWithBooks()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var title = "Test Title";
-            var genre = Genre.Fiction;
-
-            var books = new List<Domain.Models.Entities.Book>
+            var book = new Domain.Models.Entities.Book
             {
-                new() 
-                { 
-                    BookId = Guid.NewGuid(), 
-                    Title = "Test Title",  
-                    Author = "Author", 
-                    Publisher = "Publisher", 
-                    Year = 123, 
-                    Genre = genre 
-                },
-                new() 
-                { 
-                    BookId = Guid.NewGuid(), 
-                    Title = "Test Title",  
-                    Author = "Author", 
-                    Publisher = "Publisher", 
-                    Year = 123, 
-                    Genre = genre 
-                },
-                new() 
-                { 
-                    BookId = Guid.NewGuid(), 
-                    Title = "Test Title",  
-                    Author = "Author", 
-                    Publisher = "Publisher", 
-                    Year = 123, 
-                    Genre = genre 
-                }
+                BookId = Guid.NewGuid(),
+                Author = "Irineu",
+                Genre = Genre.Mystery,
+                Active = true,
+                Publisher = "Punisher",
+                Title = "Titulo",
+                Stock = 0,
+                Year = 1990
             };
 
+            DbContext.Books.Add(book);
+            await DbContext.SaveChangesAsync();
 
             // Act
-            DbContext.Books.AddRange(books);
-            DbContext.SaveChanges();
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, book.Title));
+            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
-            var bookDTOs = books.Select(book => new BookDTO
+            // Assert
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
+
+            foreach (var responseBook in res)
             {
-                Code = book.BookId,
-                Title = book.Title,
-                Author = book.Author,
-                Publisher = book.Publisher,
-                Year = book.Year,
-                Genre = book.Genre
-            }).ToList();
-            var result = await controller.GetBooksByTitle(title);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<BookDTO>>(okResult.Value);
-
-            Assert.Equal(bookDTOs.Count, returnedBooks.Count);
-        }
-
-        [Fact]
-        public async Task GivenEmptyTitle_WhenGettingBooks_ThenReturnsBadRequest()
-        {
-            // Arrange
-            var controller = new BookController(DbContext, _mapper);
-
-            // Act
-            var result = await controller.GetBooksByTitle(string.Empty);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+                responseBook!.Title.Should().Be(book.Title);
+                responseBook!.Author.Should().Be(book.Author);
+                responseBook!.Publisher.Should().Be(book.Publisher);
+                responseBook!.Genre.Should().Be(book.Genre);
+            }
         }
 
         [Fact]
         public async Task GivenNoMatchingBooks_WhenGettingBooks_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var title = "Any Title";
+            var title = "asd123";
 
             // Act
-            var result = await controller.GetBooksByTitle(title);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, title));
+            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<BookDTO>>(okResult.Value);
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
 
-            Assert.Empty(returnedBooks);
+            res.Should().BeEmpty();
         }
     }
 }

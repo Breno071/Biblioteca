@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace API.Features.Reservation.Endpoints.MakeReservation
 {
-    public class MakeReservationEndpoint : Endpoint<MakeReservationRequest, Created<ReservationDetailsDto>>
+    public class MakeReservationEndpoint : Endpoint<MakeReservationRequest, Created<MakeReservationResponse>>
     {
         public override void Configure()
         {
@@ -24,11 +24,11 @@ namespace API.Features.Reservation.Endpoints.MakeReservation
             Version(ReservationFeature.Version);
         }
 
-        public override async Task<Created<ReservationDetailsDto>> ExecuteAsync(MakeReservationRequest req, CancellationToken ct)
+        public override async Task<Created<MakeReservationResponse>> ExecuteAsync(MakeReservationRequest req, CancellationToken ct)
         {
             var result = await Resolve<IReservationService>().AddReservationAsync(req, ct);
 
-            return TypedResults.Created(HttpContext.CreatedUri(result.ReservationId), new ReservationDetailsDto
+            return TypedResults.Created(HttpContext.CreatedUri(result.ReservationId), new MakeReservationResponse
             {
                 ReservationId = result.ReservationId,
                 ClientId = result.ClientId,
