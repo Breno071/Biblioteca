@@ -25,12 +25,9 @@ namespace API.Features.Reservation.Validators
 
             var reservationExist = await dbContext.Reservations
                 .AsNoTracking()
-                .AnyAsync(r =>
-                    r.ReservationId == value &&
-                    r.IsReturned &&
-                    r.ReturnDate != null, cancellationToken: cancellation);
+                .AnyAsync(r => r.ReservationId == value, cancellationToken: cancellation);
 
-            return !reservationExist;
+            return reservationExist;
         }
     }
 

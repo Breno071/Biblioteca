@@ -7,7 +7,7 @@ namespace Tests.Client.Create
 {
     public class CreateClientTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        private const string Path = "/web/book";
+        private const string Path = "/web/client";
 
         [Fact]
         public async Task CreateClient_GivenNonExistentClientDTO_WhenCreatingClient_ThenReturnsOkResultWithCreatedClient()

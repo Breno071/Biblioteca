@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Net;
 using Tests.SharedUtils;
 using API.Features.Reservation.Endpoints.MakeReservation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests.Stock
 {
@@ -37,14 +38,26 @@ namespace Tests.Stock
 
             res.Should().NotBeNull();
 
-            var reservationDb = DbContext.Reservations.Single(x => x.ReservationId == res.ReservationId);
+            var reservationDb = await DbContext.Reservations
+                .AsNoTracking()
+                .Include(x => x.Books)
+                .Include(x => x.Client)
+                .SingleAsync(x => x.ReservationId == res!.ReservationId);
 
             reservationDb.Should().NotBeNull();
 
             reservationDb!.IsReturned.Should().BeFalse();
-            reservationDb!.ReturnDate.Should().BeNull();
+            reservationDb!.ReturnDate.Should().Be(reservationDb.ReservationDate.AddMonths(1));
             reservationDb!.Client.Should().Be(client);
-            reservationDb!.Books.AsEnumerable().Should().Equal(books);
+
+            reservationDb!.Books.Should().HaveCount(books.Count);
+
+            HashSet<Domain.Models.Entities.Book> hashSetBooks = [books[0], books[1]];
+
+            foreach (var book in hashSetBooks)
+            {
+                reservationDb!.Books.Contains(book).Should().BeTrue();
+            }
         }
     }
 }

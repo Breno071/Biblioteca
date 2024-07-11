@@ -1,9 +1,11 @@
 ﻿using Domain.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 namespace Domain.Models.Entities
 {
+    [Table("Book")]
     public class Book
     {
         [Key]

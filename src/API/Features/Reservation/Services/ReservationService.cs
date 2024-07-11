@@ -31,23 +31,39 @@ namespace API.Features.Reservation.Services
 
             var reservationId = Guid.NewGuid();
 
+            var today = DateTime.Now;
+
             var reservation = new Domain.Models.Entities.Reservation
             {
                 ReservationId = reservationId,
                 Client = client,
                 Books = books,
-                ReservationDate = DateTime.Now,
-                ReturnDate = DateTime.Now.AddMonths(-1)
+                ReservationDate = today,
+                ReturnDate = today.AddMonths(1)
             };
 
             dbContext.Reservations.Add(reservation);
+
+            books.ForEach(book =>
+            {
+                var reservationBook = new ReservationBook
+                {
+                    Book = book,
+                    BookId = book.BookId,
+                    Reservation = reservation,
+                    ReservationId = reservation.ReservationId
+                };
+
+                dbContext.Add(reservationBook);
+            });
+
             await dbContext.SaveChangesAsync(ct);
 
             return new MakeReservationResponse
             {
                 ReservationId = reservationId,
                 ClientId = client.ClientId,
-                BookIds = books.Select(b => b.BookId).ToList(),
+                BookIds = books.ConvertAll(b => b.BookId),
                 ReservationDate = reservation.ReservationDate,
                 ReturnDate = reservation.ReturnDate,
                 IsReturned = reservation.IsReturned

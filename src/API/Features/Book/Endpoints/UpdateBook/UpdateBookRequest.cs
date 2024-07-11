@@ -36,7 +36,7 @@ namespace API.Features.Book.Endpoints.UpdateBook
     {
         public UpdateBookRequestValidator()
         {
-            RuleFor(x => x.Stock).GreaterThan(0).WithMessage("O stock deve ser maior do que zero!");
+            RuleFor(x => x.Stock).GreaterThanOrEqualTo(0).WithMessage("O stock deve ser maior do que zero!");
         }
     }
 }

@@ -8,7 +8,7 @@ namespace API.Features.Reservation.Endpoints.FinishReservation
     {
         public override void Configure()
         {
-            Put($"/web/reservation");
+            Put($"/web/reservation/{{{nameof(FinishReservationRequest.ReservationId)}}}");
             AllowAnonymous();
 
             Summary(x =>

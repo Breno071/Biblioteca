@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Features.Client.Endpoints.UpdateClient
 {
     public class UpdateClientRequest
     {
+        [Required]
+        [FromRoute]
         public Guid ClientId { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "O campo Name deve ser preenchido.")]

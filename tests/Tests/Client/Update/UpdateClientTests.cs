@@ -40,7 +40,7 @@ namespace Tests.Client.Update
 
             res!.Email.Should().Be(request.Email);
             res!.Name.Should().Be(request.Name);
-            res!.ClientId.Should().Be(request.ClientId);
+            res!.ClientId.Should().Be(client.ClientId);
         }
 
         [Fact]
@@ -51,13 +51,9 @@ namespace Tests.Client.Update
 
             // Act
             var rsp = await AnonymousUser.PutAsJsonAsync(string.Concat(Path, clientId), new UpdateBookRequest());
-            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
             // Assert
-            res.Should().NotBeNull();
             rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
-
-            res.Should().BeEmpty();
         }
     }
 }

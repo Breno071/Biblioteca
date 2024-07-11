@@ -1,4 +1,5 @@
-﻿using API.Features.Reservation.Endpoints.FinishReservation;
+﻿using API.Features.Client.DTOs;
+using API.Features.Reservation.Endpoints.FinishReservation;
 using AutoFixture;
 using Domain.Models.Entities;
 using FluentAssertions;
@@ -23,13 +24,8 @@ namespace Tests.Reservation
             var books = await _autoFixture.AddBooksOnDb(DbContext, 2);
             var reservation = await _autoFixture.AddReservationToDb(DbContext, client, books);
 
-            var req = new FinishReservationRequest
-            {
-                ReservationId = reservation.ReservationId
-            };
-
             // Act
-            var rsp = await AnonymousUser.PutAsJsonAsync(string.Concat(Path, reservation.ReservationId), req);
+            var rsp = await AnonymousUser.PutAsJsonAsync(string.Concat(Path, reservation.ReservationId), new FinishReservationRequest());
 
             // Assert
             rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
@@ -39,7 +35,6 @@ namespace Tests.Reservation
             reservationDb.Should().NotBeNull();
 
             reservationDb!.IsReturned.Should().BeTrue();
-            reservationDb!.ReturnDate.Should().NotBeNull();
             reservationDb!.ReturnDate.Should().BeAfter(DateTime.MinValue);
         }
 
@@ -51,9 +46,11 @@ namespace Tests.Reservation
 
             // Act
             var rsp = await AnonymousUser.PutAsJsonAsync(string.Concat(Path, reservationId), new FinishReservationRequest());
+            var res = await rsp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
             // Assert
-            rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
+            res!.Errors["reservationId"].Should().HaveCount(1);
+            res!.Errors["reservationId"].Single().Should().Be("Reserva não encontrada!");
         }
     }
 }

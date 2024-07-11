@@ -41,10 +41,8 @@ namespace Tests.Client.Get
 
             // Act
             var rsp = await AnonymousUser.GetAsync(string.Concat(Path, clientId));
-            var res = await rsp.Content.ReadFromJsonAsync<BookDetailsDto>();
 
             // Assert
-            res.Should().NotBeNull();
             rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
         }
     }

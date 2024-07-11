@@ -27,7 +27,7 @@ namespace API.Features.Client.Validators
                 .AsNoTracking()
                 .AnyAsync(c => c.ClientId == value, cancellationToken: cancellation);
 
-            return !clientExist;
+            return clientExist;
         }
     }
 

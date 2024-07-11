@@ -1,31 +1,21 @@
-﻿using Domain.Enums;
+﻿using AutoFixture;
+using Domain.Enums;
 using FluentAssertions;
 using System.Net;
+using Tests.SharedUtils;
 
 namespace Tests.Book.Delete
 {
     public class DeleteBookTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
         private const string Path = "/web/book/";
+        private readonly Fixture _autoFixture = new Fixture();
 
         [Fact]
         public async Task GivenExistingId_WhenDeletingBook_ThenReturnsNoContent()
         {
             // Arrange
-            var book = new Domain.Models.Entities.Book
-            {
-                BookId = Guid.NewGuid(),
-                Author = "Irineu",
-                Genre = Genre.Mystery,
-                Active = true,
-                Publisher = "Punisher",
-                Title = "Titulo",
-                Stock = 0,
-                Year = 1990
-            };
-
-            DbContext.Books.Add(book);
-            await DbContext.SaveChangesAsync();
+            var book = (await _autoFixture.AddBooksOnDb(DbContext, 1)).Single();
 
             // Act
             var rsp = await AnonymousUser.DeleteAsync(string.Concat(Path, book.BookId));

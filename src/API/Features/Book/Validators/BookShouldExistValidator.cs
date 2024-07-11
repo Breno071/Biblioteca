@@ -27,7 +27,7 @@ namespace API.Features.Book.Validators
                 .AsNoTracking()
                 .AnyAsync(b => b.BookId == value && b.Active, cancellationToken: cancellation);
 
-            return !bookExist;
+            return bookExist;
         }
     }
 }

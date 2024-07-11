@@ -44,6 +44,8 @@ namespace Tests.Book.Update
             res!.Publisher.Should().Be(request.Publisher);
             res!.Genre.Should().Be(request.Genre);
             res!.Year.Should().Be(request.Year);
+
+            res!.BookId.Should().Be(book.BookId);
         }
 
         [Fact]
@@ -54,13 +56,9 @@ namespace Tests.Book.Update
 
             // Act
             var rsp = await AnonymousUser.PutAsJsonAsync(string.Concat(Path, bookId), new UpdateBookRequest());
-            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
             // Assert
-            res.Should().NotBeNull();
             rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
-
-            res.Should().BeEmpty();
         }
     }
 }

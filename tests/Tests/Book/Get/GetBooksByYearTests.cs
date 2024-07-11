@@ -1,36 +1,26 @@
 ﻿using API.Features.Book.DTOs;
+using AutoFixture;
 using Domain.Enums;
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
+using Tests.SharedUtils;
 
 namespace Tests.Book.Get
 {
     public class GetBooksByYearTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
         private const string Path = "/web/books/year/";
+        private readonly Fixture _autoFixture = new Fixture();
 
         [Fact]
         public async Task GivenValidYear_WhenGettingBooks_ThenReturnsOkResultWithBooks()
         {
             // Arrange
-            var book = new Domain.Models.Entities.Book
-            {
-                BookId = Guid.NewGuid(),
-                Author = "Irineu",
-                Genre = Genre.Mystery,
-                Active = true,
-                Publisher = "Punisher",
-                Title = "Titulo",
-                Stock = 0,
-                Year = 1990
-            };
-
-            DbContext.Books.Add(book);
-            await DbContext.SaveChangesAsync();
+            var book = (await _autoFixture.AddBooksOnDb(DbContext, 1)).Single();
 
             // Act
-            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, book.Title));
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, book.Year));
             var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
             // Assert
@@ -54,13 +44,9 @@ namespace Tests.Book.Get
 
             // Act
             var rsp = await AnonymousUser.GetAsync(string.Concat(Path, year));
-            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
             // Assert
-            res.Should().NotBeNull();
             rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
-
-            res.Should().BeEmpty();
         }
     }
 }

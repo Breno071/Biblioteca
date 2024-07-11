@@ -9,7 +9,7 @@ namespace API.Features.Client.Endpoints.UpdateClient
     {
         public override void Configure()
         {
-            Put($"/web/client");
+            Put($"/web/client/{{{nameof(UpdateClientRequest.ClientId)}}}");
             AllowAnonymous();
             Summary(x =>
             {
