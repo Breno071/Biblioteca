@@ -6,6 +6,8 @@ namespace Domain.Models.Entities
     [Table("ReservationBook")]
     public class ReservationBook
     {
+        [Key]
+        public Guid ReservationBookId { get; set; }
         public Guid ReservationId { get; set; }
         public Guid BookId { get; set; }
 

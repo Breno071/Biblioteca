@@ -48,16 +48,11 @@ namespace Tests.Stock
 
             reservationDb!.IsReturned.Should().BeFalse();
             reservationDb!.ReturnDate.Should().Be(reservationDb.ReservationDate.AddMonths(1));
-            reservationDb!.Client.Should().Be(client);
+            reservationDb!.ClientId.Should().Be(client.ClientId);
 
             reservationDb!.Books.Should().HaveCount(books.Count);
 
-            HashSet<Domain.Models.Entities.Book> hashSetBooks = [books[0], books[1]];
-
-            foreach (var book in hashSetBooks)
-            {
-                reservationDb!.Books.Contains(book).Should().BeTrue();
-            }
+            reservationDb!.Books.AsEnumerable().Should().BeEquivalentTo(books);
         }
     }
 }
