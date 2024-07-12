@@ -1,4 +1,5 @@
-﻿using API.Features.Reservation.Services;
+﻿using API.Features.Reservation.Events;
+using API.Features.Reservation.Services;
 using API.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -12,6 +13,7 @@ namespace API.Features.Reservation
         public IServiceCollection RegisterFeature(IServiceCollection services)
         {
             services.TryAddScoped<IReservationService, ReservationService>();
+            services.TryAddScoped<IReservationEventService, ReservationEventService>();
             return services;
         }
     }

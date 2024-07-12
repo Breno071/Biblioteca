@@ -26,7 +26,7 @@ namespace API.Features.Reservation.Endpoints.MakeReservation
 
         public override async Task<Created<MakeReservationResponse>> ExecuteAsync(MakeReservationRequest req, CancellationToken ct)
         {
-            var result = await Resolve<IReservationService>().AddReservationAsync(req, ct);
+            var result = await Resolve<IReservationService>().MakeReservationAsync(req, ct);
 
             return TypedResults.Created(HttpContext.CreatedUri(result.ReservationId), new MakeReservationResponse
             {

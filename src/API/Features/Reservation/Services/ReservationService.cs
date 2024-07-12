@@ -1,5 +1,7 @@
 ﻿using API.Features.Reservation.Endpoints.FinishReservation;
 using API.Features.Reservation.Endpoints.MakeReservation;
+using API.Features.Reservation.Events;
+using Domain.Interfaces;
 using Domain.Models.Entities;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -8,20 +10,20 @@ namespace API.Features.Reservation.Services
 {
     public interface IReservationService
     {
-        Task<MakeReservationResponse> AddReservationAsync(MakeReservationRequest req, CancellationToken ct);
+        Task<MakeReservationResponse> MakeReservationAsync(MakeReservationRequest req, CancellationToken ct);
         Task FinishReservationAsync(FinishReservationRequest req, CancellationToken ct);
     }
 
-    public class ReservationService : IReservationService
+    public class ReservationService : ReservationEventService, IReservationService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ReservationService(IServiceScopeFactory serviceScopeFactory)
+        public ReservationService(IServiceScopeFactory serviceScopeFactory, IProducer producer) : base(producer)
         {
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        public async Task<MakeReservationResponse> AddReservationAsync(MakeReservationRequest req, CancellationToken ct)
+        public async Task<MakeReservationResponse> MakeReservationAsync(MakeReservationRequest req, CancellationToken ct)
         {
             await using var scope = _serviceScopeFactory.CreateAsyncScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<BaseDbContext>();
@@ -59,6 +61,9 @@ namespace API.Features.Reservation.Services
 
             await dbContext.SaveChangesAsync(ct);
 
+            //Dispara evento no rabbitMQ
+            await MakeReservationEvent(reservation);
+
             return new MakeReservationResponse
             {
                 ReservationId = reservationId,
@@ -82,6 +87,8 @@ namespace API.Features.Reservation.Services
 
             dbContext.Update(reservation);
             await dbContext.SaveChangesAsync(ct);
+
+            await AddFinishReservationEvent(reservation);
         }
     }
 }
