@@ -4,12 +4,12 @@ namespace Infraestructure.Helpers
 {
     public static class DirectoryHelper
     {
-        public static DirectoryInfo? FindSolutionDirectory()
+        public static DirectoryInfo FindSolutionDirectory()
         {
             var currentyDirectory = Directory.GetCurrentDirectory();
             var directoryInfo = new DirectoryInfo(currentyDirectory);
 
-            while(directoryInfo != null && !directoryInfo.GetFiles("*.sln").Any())
+            while(directoryInfo != null && !directoryInfo.GetFiles("appsettings.json").Any())
             {
                 directoryInfo = directoryInfo.Parent;
             }

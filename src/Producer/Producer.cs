@@ -8,9 +8,9 @@ public class Producer(ConnectionFactory factory) : IProducer
 {
     private readonly ConnectionFactory _factory = factory;
 
-    public async Task Send(object message, string queue)
+    public Task Send(object message, string queue)
     {
-        await Task.Run(() =>
+        return Task.Run(() =>
         {
             _factory.HostName = "host.docker.internal";
             _factory.Port = AmqpTcpEndpoint.UseDefaultPort;
@@ -34,8 +34,6 @@ public class Producer(ConnectionFactory factory) : IProducer
                 basicProperties: null,
                 body: bytesMessage
                 );
-
-            return Task.CompletedTask;
         });
     }
 }

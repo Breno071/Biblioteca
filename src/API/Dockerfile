@@ -10,10 +10,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/API/API.csproj", "src/API/"]
-COPY ["src/ApplicationCore/ApplicationCore.csproj", "src/ApplicationCore/"]
 COPY ["src/Domain/Domain.csproj", "src/Domain/"]
 COPY ["src/Infraestructure/Infraestructure.csproj", "src/Infraestructure/"]
-RUN dotnet restore "./src/API/./API.csproj"
+COPY ["src/Producer/RabbitMQ.Producer.csproj", "src/Producer/"]
+RUN dotnet restore "./src/API/API.csproj"
 COPY . .
 WORKDIR "/src/src/API"
 RUN dotnet build "./API.csproj" -c $BUILD_CONFIGURATION -o /app/build
