@@ -24,9 +24,12 @@ namespace Infraestructure.Migrations
 
             modelBuilder.Entity("Domain.Models.Entities.Book", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("BookId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Author")
                         .IsRequired()
@@ -41,7 +44,7 @@ namespace Infraestructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid?>("ReservationCode")
+                    b.Property<Guid?>("ReservationId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Stock")
@@ -55,16 +58,16 @@ namespace Infraestructure.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.HasKey("Code");
+                    b.HasKey("BookId");
 
-                    b.HasIndex("ReservationCode");
+                    b.HasIndex("ReservationId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Book");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Client", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("ClientId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -78,18 +81,18 @@ namespace Infraestructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("Code");
+                    b.HasKey("ClientId");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Client");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Reservation", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("ReservationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ClientCode")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsReturned")
@@ -101,29 +104,69 @@ namespace Infraestructure.Migrations
                     b.Property<DateTime>("ReturnDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Code");
+                    b.HasKey("ReservationId");
 
-                    b.HasIndex("ClientCode");
+                    b.HasIndex("ClientId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservation");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.ReservationBook", b =>
+                {
+                    b.Property<Guid>("ReservationBookId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ReservationBookId");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("ReservationId");
+
+                    b.ToTable("ReservationBook");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Book", b =>
                 {
                     b.HasOne("Domain.Models.Entities.Reservation", null)
                         .WithMany("Books")
-                        .HasForeignKey("ReservationCode");
+                        .HasForeignKey("ReservationId");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Reservation", b =>
                 {
                     b.HasOne("Domain.Models.Entities.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientCode")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.ReservationBook", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Reservation", "Reservation")
+                        .WithMany()
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Reservation");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Reservation", b =>

@@ -1,24 +1,30 @@
 ﻿using Domain.Events;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 namespace Domain.Models.Entities
 {
+    [Table("Reservation")]
     public class Reservation
     {
         public event EventHandler<ReservationCreatedEventArgs> ReservationCreated;
         public event EventHandler<ReservationFinishedEventArgs> ReservationFinished;
 
         [Key]
-        public Guid Code { get; set; } = Guid.NewGuid();
-        [Required]
+        public Guid ReservationId { get; set; } = Guid.NewGuid();
+
+        [ForeignKey(nameof(Client.ClientId))]
+        public Guid ClientId { get; set; }
+
         public Client Client { get; set; }
-        [Required]
+
         public ICollection<Book> Books { get; set; }
-        [Required]
+
         public DateTime ReservationDate { get; set; }
-        [Required]
+
         public DateTime ReturnDate { get; set; }
+
         public bool IsReturned { get; set; } = false;
 
         public virtual void OnReservationCreated()

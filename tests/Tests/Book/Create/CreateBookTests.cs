@@ -1,23 +1,21 @@
-﻿using API.Controllers;
-using AutoMapper;
+﻿using API.Features.Book.Endpoints.CreateBook;
 using Domain.Enums;
-using Domain.Models.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
+using FluentAssertions;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace Tests.Book.Create
 {
     public class CreateBookTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/book";
+
         [Fact]
-        public async Task GivenNewBookDTO_WhenCreatingBook_ThenReturnsOkResultWithCreatedBook()
+        public async Task GivenNewBook_WhenCreatingBook_ThenReturnsOkResultWithCreatedBook()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-
-            var newBookDTO = new BookDTO 
+            var req = new CreateBookRequest 
             { 
-                Code = Guid.NewGuid(), 
                 Title = "New Book", 
                 Author = "Author", 
                 Publisher = "Publisher", 
@@ -26,48 +24,26 @@ namespace Tests.Book.Create
             };
 
             // Act
-            var result = await controller.CreateBook(newBookDTO);
+            var rsp = await AnonymousUser.PostAsJsonAsync(Path, req);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var createdBook = Assert.IsType<BookDTO>(okResult.Value);
+            rsp.StatusCode.Should().Be(HttpStatusCode.Created, await rsp.Content.ReadAsStringAsync());
+            var res = await rsp.Content.ReadFromJsonAsync<CreateBookResponse>();
 
-            Assert.Equal(newBookDTO.Code, createdBook.Code);
-            Assert.Equal(newBookDTO.Title, createdBook.Title);
-            Assert.Equal(newBookDTO.Author, createdBook.Author);
-            Assert.Equal(newBookDTO.Year, createdBook.Year);
+            res.Should().NotBeNull();
 
             // Check if the book was actually created in the database
-            var createdBookInDb = DbContext.Books.FirstOrDefault(x => x.Code == newBookDTO.Code);
-            Assert.NotNull(createdBookInDb);
-            Assert.Equal(newBookDTO.Title, createdBookInDb.Title);
-            Assert.Equal(newBookDTO.Author, createdBookInDb.Author);
-            Assert.Equal(newBookDTO.Year, createdBookInDb.Year);
-        }
+            var createdBookInDb = DbContext.Books.Single(x => x.BookId == res!.BookId);
 
-        [Fact]
-        public async Task GivenExistingBookDTO_WhenCreatingBook_ThenReturnsBadRequest()
-        {
-            // Arrange
-            var controller = new BookController(DbContext, _mapper);
+            createdBookInDb.Should().NotBeNull();
 
-            var existingBookDTO = new BookDTO 
-            { 
-                Code = Guid.NewGuid(), 
-                Title = "Existing Book", 
-                Author = "Author", 
-                Publisher = "Publisher", 
-                Genre = Genre.Comedy, 
-                Year = 2022 
-            };
-            
-            await controller.CreateBook(existingBookDTO);
+            res!.Title.Should().Be(createdBookInDb.Title);
+            res!.Author.Should().Be(createdBookInDb.Author);
+            res!.Publisher.Should().Be(createdBookInDb.Publisher);
+            res!.Genre.Should().Be(createdBookInDb.Genre);
+            res!.Genre.Should().Be(createdBookInDb.Genre);
 
-            // Act
-            var result = await controller.CreateBook(existingBookDTO);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            createdBookInDb.Stock.Should().Be(0);
         }
     }
 }

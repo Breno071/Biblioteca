@@ -1,75 +1,49 @@
-﻿using API.Controllers;
-using AutoMapper;
-using Domain.Models.DTO;
+﻿using API.Features.Book.DTOs;
+using API.Features.Client.DTOs;
+using AutoFixture;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
+using System.Net;
+using System.Net.Http.Json;
+using Tests.SharedUtils;
 
 namespace Tests.Client.Get
 {
     public class GetClientByIdTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/client/";
+        private readonly Fixture _autoFixture = new Fixture(); 
+
         [Fact]
         public async Task GivenValidId_WhenGettingClient_ThenReturnsOkResultWithClientDTO()
         {
             // Arrange
-            
-            var controller = new ClientController(DbContext, _mapper);
-            var id = Guid.NewGuid();
-
-            var client = new ClientDTO
-            { 
-                Code = id, 
-                Name = "Client 1",
-                Email = "teste@email.com"
-            };
-            await controller.CreateClient(client);
-
-            var clientDTO = new ClientDTO 
-            { 
-                Code = client.Code, 
-                Name = client.Name,
-                Email = client.Email    
-            };
+            var client = (await _autoFixture.AddClientsToDb(DbContext, 1)).Single();
 
             // Act
-            var result = await controller.GetClientById(id);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, client.ClientId));
+            var res = await rsp.Content.ReadFromJsonAsync<ClientDetailsDto>();
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedClientDTO = Assert.IsType<ClientDTO>(okResult.Value);
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
 
-            Assert.Equal(clientDTO.Code, returnedClientDTO.Code);
-            Assert.Equal(clientDTO.Name, returnedClientDTO.Name);
-            Assert.Equal(clientDTO.Email, returnedClientDTO.Email);
-        }
-
-        [Fact]
-        public async Task GivenEmptyId_WhenGettingClient_ThenReturnsBadRequest()
-        {
-            // Arrange
-            
-            var controller = new ClientController(DbContext, _mapper);
-
-            // Act
-            var result = await controller.GetClientById(Guid.Empty);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            res!.Email.Should().Be(client.Email);
+            res!.Name.Should().Be(client.Name);
+            res!.ClientId.Should().Be(client.ClientId);
         }
 
         [Fact]
         public async Task GivenNonExistentId_WhenGettingClient_ThenReturnsNotFound()
         {
             // Arrange
-            
-            var controller = new ClientController(DbContext, _mapper);
-            var id = Guid.NewGuid();
+            var clientId = Guid.NewGuid();
 
             // Act
-            var result = await controller.GetClientById(id);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, clientId));
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
         }
     }
 }

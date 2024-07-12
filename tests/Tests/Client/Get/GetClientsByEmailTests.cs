@@ -1,73 +1,49 @@
-﻿using API.Controllers;
-using AutoMapper;
-using Domain.Models.DTO;
+﻿using API.Features.Book.DTOs;
+using API.Features.Client.DTOs;
+using AutoFixture;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using System.Net;
+using System.Net.Http.Json;
+using Tests.SharedUtils;
 
 namespace Tests.Client.Get
 {
     public class GetClientsByEmailTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/client/email/";
+        private readonly Fixture _autoFixture = new Fixture();
+
         [Fact]
-        public async Task GivenValidEmail_WhenGettingClients_ThenReturnsOkResultWithClientDTOs()
+        public async Task GivenValidEmail_WhenGettingClients_ThenReturnsOkResultWithClients()
         {
             // Arrange
-            
-            var controller = new ClientController(DbContext, _mapper);
-            var email = "test@example.com";
-
-            var clients = new List<Domain.Models.Entities.Client>
-            {
-                new() 
-                { 
-                    Code = Guid.NewGuid(), 
-                    Name = "Client 1", 
-                    Email = email 
-                },
-                new() 
-                { 
-                    Code = Guid.NewGuid(), 
-                    Name = "Client 2", 
-                    Email = email 
-                }
-            };
-
+            var client = (await _autoFixture.AddClientsToDb(DbContext, 1)).Single();
 
             // Act
-            DbContext.Clients.AddRange(clients);
-            DbContext.SaveChanges();
-
-            var clientDTOs = clients.Select(client => new ClientDTO 
-            { 
-                Code = client.Code, 
-                Name = client.Name, 
-                Email = client.Email 
-            }).ToList();
-            var result = await controller.GetClientsByEmail(email);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, client.Email));
+            var res = await rsp.Content.ReadFromJsonAsync<ClientDetailsDto>();
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedClientDTOs = Assert.IsType<List<ClientDTO>>(okResult.Value);
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
 
-            Assert.Equal(clientDTOs.Count, returnedClientDTOs.Count);
+            res!.Email.Should().Be(client.Email);
+            res!.Name.Should().Be(client.Name);
+            res!.ClientId.Should().Be(client.ClientId);
         }
 
         [Fact]
         public async Task GivenNonExistentEmail_WhenGettingClients_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange
-            var controller = new ClientController(DbContext, _mapper);
-            var nonexistentEmail = "nonexistent@example.com";
+            var email = Guid.NewGuid();
 
             // Act
-            var result = await controller.GetClientsByEmail(nonexistentEmail);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, email));
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedClientDTOs = Assert.IsType<List<ClientDTO>>(okResult.Value);
-
-            Assert.Empty(returnedClientDTOs);
+            rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());
         }
     }
 }

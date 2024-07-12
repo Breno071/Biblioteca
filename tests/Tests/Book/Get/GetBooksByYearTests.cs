@@ -1,92 +1,52 @@
-﻿using API.Controllers;
-using AutoMapper;
+﻿using API.Features.Book.DTOs;
+using AutoFixture;
 using Domain.Enums;
-using Domain.Models.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using FluentAssertions;
+using System.Net;
+using System.Net.Http.Json;
+using Tests.SharedUtils;
 
 namespace Tests.Book.Get
 {
     public class GetBooksByYearTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/books/year/";
+        private readonly Fixture _autoFixture = new Fixture();
+
         [Fact]
-        public async Task GivenValidYear_WhenGettingBooks_ThenReturnsOkResultWithBookDTOs()
+        public async Task GivenValidYear_WhenGettingBooks_ThenReturnsOkResultWithBooks()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var year = 2022;
-
-            var books = new List<Domain.Models.Entities.Book>
-            {
-                new() 
-                { 
-                    Code = Guid.NewGuid(), 
-                    Title = "Book 1", 
-                    Year = year, 
-                    Author = "Author", 
-                    Publisher = "Publisher", 
-                    Genre = 
-                    Genre.Adventure 
-                },
-                new() 
-                { 
-                    Code = Guid.NewGuid(), 
-                    Title = "Book 2", 
-                    Year = year, 
-                    Author = "Author", 
-                    Publisher = "Publisher", 
-                    Genre = Genre.Adventure 
-                },
-                new() 
-                { 
-                    Code = Guid.NewGuid(), 
-                    Title = "Book 3", 
-                    Year = year, 
-                    Author = "Author", 
-                    Publisher = "Publisher", 
-                    Genre = Genre.Adventure 
-                }
-            };
-
+            var book = (await _autoFixture.AddBooksOnDb(DbContext, 1)).Single();
 
             // Act
-            DbContext.Books.AddRange(books);
-            DbContext.SaveChanges();
-
-            var bookDTOs = books.Select(book => new BookDTO 
-            { 
-                Code = book.Code, 
-                Title = book.Title, 
-                Year = book.Year,
-                Author = book.Author,
-                Publisher = book.Publisher,
-                Genre = book.Genre
-            }).ToList();
-            var result = await controller.GetBooksByYear(year);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, book.Year));
+            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<BookDTO>>(okResult.Value);
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
 
-            Assert.Equal(bookDTOs.Count, returnedBooks.Count);
+            foreach (var responseBook in res)
+            {
+                responseBook!.Title.Should().Be(book.Title);
+                responseBook!.Author.Should().Be(book.Author);
+                responseBook!.Publisher.Should().Be(book.Publisher);
+                responseBook!.Genre.Should().Be(book.Genre);
+            }
         }
 
         [Fact]
         public async Task GivenNoMatchingBooks_WhenGettingBooks_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var year = 1;
+            var year = 1990;
 
             // Act
-            var result = await controller.GetBooksByYear(year);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, year));
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<BookDTO>>(okResult.Value);
-
-            Assert.Empty(returnedBooks);
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
         }
     }
 }

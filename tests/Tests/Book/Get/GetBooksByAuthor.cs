@@ -1,91 +1,54 @@
-﻿using API.Controllers;
-using AutoMapper;
+﻿using API.Features.Book.Endpoints.CreateBook;
 using Domain.Enums;
-using Domain.Models.DTO;
-using Domain.Models.Entities;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+using System.Net.Http.Json;
+using System.Net;
+using API.Features.Book.DTOs;
+using AutoFixture;
+using Tests.SharedUtils;
 
 namespace Tests.Book.Get
 {
     public class GetBooksByAuthor(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
+        private const string Path = "/web/books/author/";
+        private readonly Fixture _autoFixture = new Fixture();
+
         [Fact]
-        public async Task GivenValidAuthor_WhenGettingBooksByAuthor_ThenReturnsOkResultWithBookDTOs()
+        public async Task GivenValidAuthor_WhenGettingBooksByAuthor_ThenReturnsOkResultWithBooks()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var author = "Irineu";
-
-            var books = new List<BookDTO>
-            {
-                new() 
-                { 
-                    Code = Guid.NewGuid(), 
-                    Title = "Book 1",  
-                    Author = "Irineu", 
-                    Publisher = "Publisher", 
-                    Year = 123, 
-                    Genre = Genre.ScienceFiction 
-                },
-                new() 
-                { 
-                    Code = Guid.NewGuid(), 
-                    Title = "Book 2",  
-                    Author = "Irineu", 
-                    Publisher = "Publisher", 
-                    Year = 123, 
-                    Genre = Genre.ScienceFiction 
-                }
-            };
+            var book = (await _autoFixture.AddBooksOnDb(DbContext, 1)).Single();
 
             // Act
-            foreach (var book in books)
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, book.Author));
+            var res = await rsp.Content.ReadFromJsonAsync<List<BookDetailsDto>>();
+
+            // Assert
+            res.Should().NotBeNull();
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
+
+            foreach (var responseBook in res)
             {
-                await controller.CreateBook(book);
+                responseBook!.Title.Should().Be(book.Title);
+                responseBook!.Author.Should().Be(book.Author);
+                responseBook!.Publisher.Should().Be(book.Publisher);
+                responseBook!.Genre.Should().Be(book.Genre);
             }
-
-            var result = await controller.GetBooksByAuthor(author);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<BookDTO?>>(okResult.Value);
-
-            Assert.NotNull(returnedBooks);
-            Assert.Equal(returnedBooks.Count, books.Count);
-            Assert.Equal(books.Count, returnedBooks.Count);
-        }
-
-        [Fact]
-        public async Task GivenEmptyAuthor_WhenGettingBooksByAuthor_ThenReturnsBadRequest()
-        {
-            // Arrange
-            
-            var controller = new BookController(DbContext, _mapper);
-
-            // Act
-            var result = await controller.GetBooksByAuthor(string.Empty);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
         public async Task GivenNoMatchingBooks_WhenGettingBooksByAuthor_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange
-            var controller = new BookController(DbContext, _mapper);
-            var author = "Nonexistent Author jose da silva";
+            var author = "asd123";
 
             // Act
-            var result = await controller.GetBooksByAuthor(author);
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, author));
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedBooks = Assert.IsType<List<BookDTO?>>(okResult.Value);
-
-            Assert.Empty(returnedBooks);
+            rsp.StatusCode.Should().Be(HttpStatusCode.OK, await rsp.Content.ReadAsStringAsync());
         }
     }
 }

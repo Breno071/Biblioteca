@@ -1,13 +1,15 @@
 ﻿using Domain.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 namespace Domain.Models.Entities
 {
+    [Table("Book")]
     public class Book
     {
         [Key]
-        public Guid Code { get; set; } = Guid.NewGuid();
+        public Guid BookId { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "O campo Title deve ser preenchido.")]
         [MaxLength(255)]
