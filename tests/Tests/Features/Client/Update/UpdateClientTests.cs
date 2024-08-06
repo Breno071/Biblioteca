@@ -10,7 +10,7 @@ using API.Features.Client.Endpoints.UpdateClient;
 using FluentAssertions;
 using API.Features.Client.DTOs;
 
-namespace Tests.Client.Update
+namespace Tests.Features.Client.Update
 {
     public class UpdateClientTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {

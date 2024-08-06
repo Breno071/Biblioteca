@@ -9,7 +9,7 @@ using Tests.SharedUtils;
 using API.Features.Reservation.Endpoints.MakeReservation;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tests.Stock
+namespace Tests.Features.Reservation
 {
     public class MakeReservationTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {

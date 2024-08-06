@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Tests.SharedUtils;
 
-namespace Tests.Reservation
+namespace Tests.Features.Reservation
 {
     public class FinishReservationTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {

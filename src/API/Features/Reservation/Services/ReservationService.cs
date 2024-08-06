@@ -1,8 +1,7 @@
 ﻿using API.Features.Reservation.Endpoints.FinishReservation;
 using API.Features.Reservation.Endpoints.MakeReservation;
-using API.Features.Reservation.Events;
+using Core.Messaging.Services;
 using Domain.Interfaces;
-using Domain.Models.Entities;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,13 +13,15 @@ namespace API.Features.Reservation.Services
         Task FinishReservationAsync(FinishReservationRequest req, CancellationToken ct);
     }
 
-    public class ReservationService : ReservationEventService, IReservationService
+    public class ReservationService : IReservationService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ISendMessage _sendMessageService;
 
-        public ReservationService(IServiceScopeFactory serviceScopeFactory, IProducer producer) : base(producer)
+        public ReservationService(IServiceScopeFactory serviceScopeFactory, ISendMessage sendMessageService)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _sendMessageService = sendMessageService;
         }
 
         public async Task<MakeReservationResponse> MakeReservationAsync(MakeReservationRequest req, CancellationToken ct)
@@ -46,23 +47,12 @@ namespace API.Features.Reservation.Services
 
             dbContext.Reservations.Add(reservation);
 
-            books.ForEach(book =>
-            {
-                var reservationBook = new ReservationBook
-                {
-                    Book = book,
-                    BookId = book.BookId,
-                    Reservation = reservation,
-                    ReservationId = reservation.ReservationId
-                };
-
-                dbContext.Add(reservationBook);
-            });
-
-            await dbContext.SaveChangesAsync(ct);
+            books.ForEach(b => b.Stock--);
 
             //Dispara evento no rabbitMQ
-            await MakeReservationEvent(reservation);
+            _sendMessageService.SendLargeMessage(reservation, "");
+
+            await dbContext.SaveChangesAsync(ct);            
 
             return new MakeReservationResponse
             {
@@ -88,7 +78,7 @@ namespace API.Features.Reservation.Services
             dbContext.Update(reservation);
             await dbContext.SaveChangesAsync(ct);
 
-            await AddFinishReservationEvent(reservation);
+            _sendMessageService.SendLargeMessage(reservation, "");
         }
     }
 }

@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infraestructure.Configuration
 {
-    public static class DbConfiguration
+    public static class InfraestructureExtension
     {
-        public static void AddLibraryDbContext(this IServiceCollection services)
+        public static IServiceCollection AddInfraestructure(this IServiceCollection services)
         {
             var solutionFolder = DirectoryHelper.FindSolutionDirectory();
 
@@ -21,14 +21,18 @@ namespace Infraestructure.Configuration
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
+
+            return services;
         }        
 
-        public static void InitializeMigration(IServiceProvider serviceProvider)
+        public static IServiceProvider InitializeMigration(this IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<BaseDbContext>();
             context.Database.Migrate();
+
+            return serviceProvider;
         }
     }
 }

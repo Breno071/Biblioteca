@@ -3,7 +3,7 @@ using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace Tests.Client.Create
+namespace Tests.Features.Client.Create
 {
     public class CreateClientTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {

@@ -7,21 +7,21 @@ using System.Net;
 using System.Net.Http.Json;
 using Tests.SharedUtils;
 
-namespace Tests.Client.Get
+namespace Tests.Features.Client.Get
 {
-    public class GetClientByIdTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
+    public class GetClientsByEmailTests(IntegrationTestWebApiFactory factory) : BaseIntegrationTest(factory)
     {
-        private const string Path = "/web/client/";
-        private readonly Fixture _autoFixture = new Fixture(); 
+        private const string Path = "/web/client/email/";
+        private readonly Fixture _autoFixture = new Fixture();
 
         [Fact]
-        public async Task GivenValidId_WhenGettingClient_ThenReturnsOkResultWithClientDTO()
+        public async Task GivenValidEmail_WhenGettingClients_ThenReturnsOkResultWithClients()
         {
             // Arrange
             var client = (await _autoFixture.AddClientsToDb(DbContext, 1)).Single();
 
             // Act
-            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, client.ClientId));
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, client.Email));
             var res = await rsp.Content.ReadFromJsonAsync<ClientDetailsDto>();
 
             // Assert
@@ -34,13 +34,13 @@ namespace Tests.Client.Get
         }
 
         [Fact]
-        public async Task GivenNonExistentId_WhenGettingClient_ThenReturnsNotFound()
+        public async Task GivenNonExistentEmail_WhenGettingClients_ThenReturnsOkResultWithEmptyList()
         {
             // Arrange
-            var clientId = Guid.NewGuid();
+            var email = Guid.NewGuid();
 
             // Act
-            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, clientId));
+            var rsp = await AnonymousUser.GetAsync(string.Concat(Path, email));
 
             // Assert
             rsp.StatusCode.Should().Be(HttpStatusCode.NotFound, await rsp.Content.ReadAsStringAsync());

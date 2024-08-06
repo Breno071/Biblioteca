@@ -1,12 +1,8 @@
 using API.Shared.Extensions;
-using Domain.Interfaces;
+using Core.Configuration;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Infraestructure.Configuration;
-using RabbitMQ.Client;
-using RabbitMQ.Producer;
-using Serilog;
-using Serilog.Sinks.MSSqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,10 +22,9 @@ builder.Services
     });
 
 //Configurations
-builder.Services.AddLibraryDbContext();
-
-builder.Services.AddScoped<ConnectionFactory>();
-builder.Services.AddScoped<IProducer, Producer>();
+builder.Services
+    .AddInfraestructure()
+    .AddApplicationCore();
 
 // Inject logging
 builder.Services.ConfigureSerilog();
@@ -39,8 +34,7 @@ builder.Services.RegisterFeatures();
 var app = builder.Build();
 
 //Initialize Migrations
-DbConfiguration.InitializeMigration(app.Services);
-
+app.Services.InitializeMigration();
 
 app.UseCors(x => x
     .SetIsOriginAllowed(options => true)
@@ -49,7 +43,8 @@ app.UseCors(x => x
     .AllowCredentials()
 );
 
-app.UseFastEndpoints().UseSwaggerGen();
+app.UseFastEndpoints()
+    .UseSwaggerGen();
 
 await app.RunAsync();
 

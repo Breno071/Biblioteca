@@ -31,5 +31,8 @@ namespace Domain.Models.Entities
 
         public int Stock { get; set; } = 0;
         public bool Active { get; set; }  = true;
+
+        public ICollection<Reservation> Reservations { get; set; }
+        public List<ReservationBook> ReservationBooks { get; set; }
     }
 }
