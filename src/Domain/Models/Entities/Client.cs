@@ -19,5 +19,7 @@ namespace Domain.Models.Entities
         [EmailAddress(ErrorMessage = "Email inválido.")]
         [MaxLength(255, ErrorMessage = "O campo Email deve ter no máximo 255 caracteres.")]
         public string Email { get; set; }
+
+        public ICollection<Reservation> Reservations { get; set; } = default!;
     }
 }

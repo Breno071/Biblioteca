@@ -34,7 +34,6 @@
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infraestructure\Infraestructure.csproj" />
-    <ProjectReference Include="..\Producer\RabbitMQ.Producer.csproj" />
   </ItemGroup>
 
 </Project>

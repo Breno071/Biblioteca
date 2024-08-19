@@ -6,7 +6,6 @@ namespace Core.Messaging.Services
     public interface ISendMessage
     {
         void Send(object message);
-        void SendLargeMessage(object message, string identifier);
     }
 
     public class SendMessageService : ISendMessage
@@ -21,11 +20,6 @@ namespace Core.Messaging.Services
         public void Send(object message)
         {
             broker.PublishMessage(message);
-        }
-
-        public void SendLargeMessage(object message, string identifier)
-        {
-            broker.PublishLargeMessage(message, identifier);
         }
     }
 }

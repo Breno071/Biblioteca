@@ -56,7 +56,6 @@
     <ProjectReference Include="..\..\src\API\API.csproj" />
     <ProjectReference Include="..\..\src\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\src\Infraestructure\Infraestructure.csproj" />
-    <ProjectReference Include="..\..\src\Producer\RabbitMQ.Producer.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using API.Features.Reservation.Endpoints.FinishReservation;
 using API.Features.Reservation.Endpoints.MakeReservation;
+using API.Features.Reservation.Events;
 using Core.Messaging.Services;
 using Domain.Interfaces;
 using Infraestructure.Data;
@@ -50,7 +51,12 @@ namespace API.Features.Reservation.Services
             books.ForEach(b => b.Stock--);
 
             //Dispara evento no rabbitMQ
-            _sendMessageService.SendLargeMessage(reservation, "");
+            _sendMessageService.Send(new ReservationCreatedEvent
+            {
+                ReservationId = reservation.ReservationId,
+                ReservationDate = reservation.ReservationDate,
+                ReturnDate = reservation.ReturnDate
+            });
 
             await dbContext.SaveChangesAsync(ct);            
 
@@ -76,9 +82,15 @@ namespace API.Features.Reservation.Services
             reservation.IsReturned = true;
 
             dbContext.Update(reservation);
-            await dbContext.SaveChangesAsync(ct);
 
-            _sendMessageService.SendLargeMessage(reservation, "");
+            _sendMessageService.Send(new ReservationFinishedEvent
+            {
+                ReservationId = reservation.ReservationId,
+                ReservationDate = reservation.ReservationDate,
+                ReturnDate = reservation.ReturnDate
+            });
+
+            await dbContext.SaveChangesAsync(ct);
         }
     }
 }

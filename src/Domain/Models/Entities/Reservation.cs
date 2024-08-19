@@ -15,7 +15,6 @@ namespace Domain.Models.Entities
         public Client Client { get; set; }
 
         public ICollection<Book> Books { get; set; }
-        public List<ReservationBook> ReservationBooks { get; set; }
 
         public DateTime ReservationDate { get; set; }
 

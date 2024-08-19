@@ -14,6 +14,7 @@ namespace Infraestructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ConfigureEntity<Reservation, Book, ReservationBook>();
+            modelBuilder.ConfigureEntity<Book, Reservation, ReservationBook>();
         }
     }
 

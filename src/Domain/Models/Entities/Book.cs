@@ -33,6 +33,5 @@ namespace Domain.Models.Entities
         public bool Active { get; set; }  = true;
 
         public ICollection<Reservation> Reservations { get; set; }
-        public List<ReservationBook> ReservationBooks { get; set; }
     }
 }
